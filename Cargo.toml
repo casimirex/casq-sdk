@@ -1,0 +1,29 @@
+[package]
+name = "casq-sdk"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Async Rust client SDK for the casimirQ quantum circuit simulation platform"
+license = "MIT"
+repository = "https://github.com/casimirq/casq-sdk"
+readme = "README.md"
+keywords = ["quantum", "simulator", "sdk", "casimirq", "quantum-computing"]
+categories = ["api-bindings", "science"]
+
+[dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[[example]]
+name = "bell_state"
+
+[[example]]
+name = "algorithms"
+
+[[example]]
+name = "grover"
