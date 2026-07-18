@@ -1,6 +1,7 @@
 //! Offline unit tests exercising serialization / deserialization against the
 //! exact JSON shapes the casimirQ API uses. These need no server.
 
+use casq_sdk::advanced::{KernelMatrix, MlPauliTerm, MlVqeResult, NoiseChannel, QecCode};
 use casq_sdk::{Circuit, Engine, Operation, RunOptions, SimulationResult};
 
 #[test]
@@ -112,4 +113,55 @@ fn simulation_result_parses_bell_response() {
     let (state, prob) = result.most_probable().unwrap();
     assert!(state == "00" || state == "11");
     assert!((prob - 0.5).abs() < 1e-9);
+}
+
+#[test]
+fn qec_code_parses() {
+    let raw = r#"{
+        "id":"steane","nPhysical":7,"nLogical":1,"distance":3,
+        "nStabilizers":6,"errorCorrectionCapability":"Can correct any 1-qubit error"
+    }"#;
+    let code: QecCode = serde_json::from_str(raw).unwrap();
+    assert_eq!(code.id, "steane");
+    assert_eq!(code.n_physical, 7);
+    assert_eq!(code.n_logical, 1);
+    assert_eq!(code.distance, 3);
+}
+
+#[test]
+fn ml_vqe_result_parses() {
+    let raw = r#"{
+        "ansatz":"hardware_efficient","minEnergy":-0.5,
+        "optimalParams":[0.1,0.2,0.3],"iterations":3,"converged":true
+    }"#;
+    let r: MlVqeResult = serde_json::from_str(raw).unwrap();
+    assert_eq!(r.min_energy, -0.5);
+    assert_eq!(r.optimal_params.len(), 3);
+    assert!(r.converged);
+}
+
+#[test]
+fn kernel_matrix_parses() {
+    let raw = r#"{"featureMap":"zz","size":[2,2],"matrix":[[1.0,0.8],[0.8,1.0]]}"#;
+    let k: KernelMatrix = serde_json::from_str(raw).unwrap();
+    assert_eq!(k.feature_map, "zz");
+    assert_eq!(k.size, [2, 2]);
+    assert_eq!(k.matrix[0][1], 0.8);
+}
+
+#[test]
+fn ml_pauli_term_serializes() {
+    let term = MlPauliTerm::new("ZZ", 1.5);
+    let json = serde_json::to_value(&term).unwrap();
+    assert_eq!(json["pauli"], "ZZ");
+    assert_eq!(json["coefficient"], 1.5);
+}
+
+#[test]
+fn noise_channel_serializes_with_type_rename() {
+    let ch = NoiseChannel::new("depolarizing", ("probability", 0.01), 0);
+    let json = serde_json::to_value(&ch).unwrap();
+    assert_eq!(json["type"], "depolarizing");
+    assert_eq!(json["params"]["probability"], 0.01);
+    assert_eq!(json["targets"], serde_json::json!([0]));
 }

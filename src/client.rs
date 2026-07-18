@@ -1,5 +1,6 @@
 //! The HTTP client that talks to a casimirQ server.
 
+use crate::advanced::Advanced;
 use crate::algorithms::Algorithms;
 use crate::circuit::Circuit;
 use crate::error::{Error, Result};
@@ -164,6 +165,11 @@ impl Client {
     /// Access the pre-built quantum algorithms API.
     pub fn algorithms(&self) -> Algorithms<'_> {
         Algorithms { client: self }
+    }
+
+    /// Access the advanced-features API (error correction, noise, quantum ML).
+    pub fn advanced(&self) -> Advanced<'_> {
+        Advanced { client: self }
     }
 
     // --- Internal request helpers (also used by the algorithms module) ---

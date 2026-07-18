@@ -43,6 +43,7 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+pub mod advanced;
 pub mod algorithms;
 mod circuit;
 mod client;

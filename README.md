@@ -106,6 +106,46 @@ println!("ground-state energy ≈ {:.4}", vqe.optimal_energy);
 | `qaoa(n, edges, p)` | `QaoaResult` |
 | `vqe_examples()` / `qaoa_examples()` | example inputs |
 
+## Advanced features
+
+Beyond the textbook algorithms, `client.advanced()` exposes error correction,
+noise modeling, and quantum machine learning:
+
+```rust
+let adv = client.advanced();
+
+// Quantum error correction (Steane, Shor codes)
+let codes = adv.qec_codes().await?;                  // properties of each code
+let encoded = adv.encode("steane", Some(&[0])).await?;
+let syndrome = adv.syndrome("steane", Some(&[0])).await?;
+
+// Noise modeling
+let catalog = adv.noise_catalog().await?;            // channels + device models
+let dev = adv.characterize("ibmq_lagos").await?;     // T1/T2, error rates, ...
+
+// Quantum machine learning
+use casq_sdk::advanced::{MlPauliTerm, VqeRunOptions};
+let ml = adv.ml_catalog().await?;                    // ansatze + feature maps
+let vqe = adv.ml_vqe(
+    &[MlPauliTerm::new("ZZ", 1.0), MlPauliTerm::new("XX", 0.5)],
+    "hardware_efficient",
+    VqeRunOptions { max_iterations: Some(50), ..Default::default() },
+).await?;
+let kernel = adv.kernel_matrix(&data, Some("zz")).await?; // quantum kernel (QSVM)
+```
+
+| Method | Returns |
+| --- | --- |
+| `qec_codes()` | `Vec<QecCode>` |
+| `encode(code, logical_state)` | `EncodedState` |
+| `syndrome(code, logical_state)` | `SyndromeResult` |
+| `noise_catalog()` | `NoiseCatalog` |
+| `validate_noise(channels)` | `NoiseValidation` |
+| `characterize(model)` | `DeviceCharacteristics` |
+| `ml_catalog()` | `MlCatalog` |
+| `ml_vqe(hamiltonian, ansatz, opts)` | `MlVqeResult` |
+| `kernel_matrix(data, feature_map)` | `KernelMatrix` |
+
 ## Authentication
 
 `login`/`signup` store the returned JWT on the client for subsequent calls. You

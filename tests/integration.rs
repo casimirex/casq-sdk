@@ -132,3 +132,79 @@ async fn circuit_persistence_roundtrip() {
     client.delete_circuit(&created.id).await.expect("delete");
     assert!(client.get_circuit(&created.id).await.is_err());
 }
+
+#[tokio::test]
+async fn advanced_qec_codes_are_listed() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let codes = client.advanced().qec_codes().await.expect("qec codes");
+    let ids: Vec<&str> = codes.iter().map(|c| c.id.as_str()).collect();
+    assert!(ids.contains(&"steane"));
+    assert!(ids.contains(&"shor"));
+    // The Steane code encodes 1 logical qubit into 7 physical qubits.
+    let steane = codes.iter().find(|c| c.id == "steane").unwrap();
+    assert_eq!(steane.n_physical, 7);
+    assert_eq!(steane.n_logical, 1);
+}
+
+#[tokio::test]
+async fn advanced_encode_and_syndrome_of_clean_state() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+    let adv = client.advanced();
+
+    let encoded = adv.encode("steane", Some(&[0])).await.expect("encode");
+    assert_eq!(encoded.n_physical, 7);
+    // A freshly encoded, error-free state has a trivial (all-zero) syndrome.
+    let syn = adv.syndrome("steane", Some(&[0])).await.expect("syndrome");
+    assert!(syn.syndrome.iter().all(|&s| s == 0));
+}
+
+#[tokio::test]
+async fn advanced_quantum_kernel_matrix_is_valid() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let data = vec![vec![0.1, 0.2], vec![0.9, 0.8], vec![0.15, 0.25]];
+    let k = client
+        .advanced()
+        .kernel_matrix(&data, Some("zz"))
+        .await
+        .expect("kernel");
+    assert_eq!(k.size, [3, 3]);
+    // A kernel matrix has ones on the diagonal (a point is identical to itself).
+    for i in 0..3 {
+        assert!((k.matrix[i][i] - 1.0).abs() < 1e-6);
+    }
+}
+
+#[tokio::test]
+async fn advanced_ml_vqe_runs() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+    use casq_sdk::advanced::{MlPauliTerm, VqeRunOptions};
+
+    let hamiltonian = vec![MlPauliTerm::new("ZZ", 1.0), MlPauliTerm::new("XX", 0.5)];
+    let r = client
+        .advanced()
+        .ml_vqe(
+            &hamiltonian,
+            "hardware_efficient",
+            VqeRunOptions {
+                max_iterations: Some(30),
+                ..Default::default()
+            },
+        )
+        .await
+        .expect("ml vqe");
+    assert!(!r.optimal_params.is_empty());
+}
