@@ -197,6 +197,18 @@ CASQ_EMAIL=admin@example.com CASQ_PASSWORD=admin123 \
 
 The integration tests are skipped automatically when `CASQ_BASE_URL` is unset.
 
+### Contract test
+
+`cargo test` also runs an offline **contract test** (`tests/contract.rs`) that
+validates every endpoint and request field the SDK uses against a vendored copy
+of the platform's OpenAPI spec (`tests/openapi.json`) — so CI fails the moment
+this reference client drifts from the API contract. Refresh the vendored spec
+after an API change:
+
+```bash
+scripts/refresh-openapi.sh ../casimirQ/openapi.json
+```
+
 ## Related
 
 - [casimirQ](../casimirQ) — the quantum simulation platform this client targets.

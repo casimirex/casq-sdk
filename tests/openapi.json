@@ -1,0 +1,1851 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/algorithms": {
+      "get": {
+        "operationId": "AlgorithmsController_getAlgorithms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get list of available quantum algorithms.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/qft": {
+      "post": {
+        "operationId": "AlgorithmsController_executeQFT",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QFTDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Quantum Fourier Transform.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/grover": {
+      "post": {
+        "operationId": "AlgorithmsController_executeGrover",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroverDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Grover's Search.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/vqe": {
+      "post": {
+        "operationId": "AlgorithmsController_executeVQE",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VQEDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute VQE.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/vqe/examples": {
+      "get": {
+        "operationId": "AlgorithmsController_getVQEEExamples",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get example Hamiltonians for VQE.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/qaoa": {
+      "post": {
+        "operationId": "AlgorithmsController_executeQAOA",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QAOADto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute QAOA.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/qaoa/examples": {
+      "get": {
+        "operationId": "AlgorithmsController_getQAOAExamples",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get example graphs for QAOA.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/teleport": {
+      "post": {
+        "operationId": "AlgorithmsController_executeTeleport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeleportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Quantum Teleportation.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/shor": {
+      "post": {
+        "operationId": "AlgorithmsController_executeShor",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Shor's Algorithm.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/{name}/verify": {
+      "get": {
+        "operationId": "AlgorithmsController_verifyAlgorithm",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Verify an algorithm.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Login and get JWT token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/signup": {
+      "post": {
+        "operationId": "AuthController_signup",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Register a new account and return a token (auto-login).",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Refresh JWT token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Logout (invalidate token on client side)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "AuthController_getCurrentUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get current user info",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/validate": {
+      "post": {
+        "operationId": "AuthController_validateToken",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Validate token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/circuits": {
+      "get": {
+        "operationId": "CircuitsController_listCircuits",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all circuits for the authenticated user.",
+        "tags": [
+          "Circuits"
+        ]
+      },
+      "post": {
+        "operationId": "CircuitsController_createCircuit",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create and persist a new circuit.",
+        "tags": [
+          "Circuits"
+        ]
+      }
+    },
+    "/api/v1/circuits/{id}": {
+      "get": {
+        "operationId": "CircuitsController_getCircuit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a circuit by ID (owned by the authenticated user).",
+        "tags": [
+          "Circuits"
+        ]
+      },
+      "put": {
+        "operationId": "CircuitsController_updateCircuit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a circuit's name and/or operations.",
+        "tags": [
+          "Circuits"
+        ]
+      },
+      "delete": {
+        "operationId": "CircuitsController_deleteCircuit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a circuit.",
+        "tags": [
+          "Circuits"
+        ]
+      }
+    },
+    "/api/v1/circuits/{id}/simulate": {
+      "post": {
+        "operationId": "CircuitsController_simulateCircuit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Simulate a circuit and return real results (statevector, probabilities\nand sampled measurement counts).\n\nThe circuit is resolved in one of two ways:\n - inline: the request body carries `numQubits` (+ `operations`), used as-is\n - stored: otherwise the persisted circuit `:id` is loaded and simulated",
+        "tags": [
+          "Circuits"
+        ]
+      }
+    },
+    "/api/v1/simulations": {
+      "get": {
+        "operationId": "SimulationController_listSimulations",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the authenticated user's simulation runs (most recent first).",
+        "tags": [
+          "Simulations"
+        ]
+      },
+      "post": {
+        "operationId": "SimulationController_runSimulation",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run a new simulation of a stored circuit and record it.",
+        "tags": [
+          "Simulations"
+        ]
+      }
+    },
+    "/api/v1/simulations/{id}": {
+      "get": {
+        "operationId": "SimulationController_getSimulation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a simulation run (including results).",
+        "tags": [
+          "Simulations"
+        ]
+      }
+    },
+    "/api/v1/simulations/{id}/results": {
+      "get": {
+        "operationId": "SimulationController_getResults",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get just the results of a simulation run.",
+        "tags": [
+          "Simulations"
+        ]
+      }
+    },
+    "/api/v1/visualizations/bloch-sphere/{qubitId}": {
+      "get": {
+        "operationId": "VisualizationController_getBlochSphereData",
+        "parameters": [
+          {
+            "name": "qubitId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "simulationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Bloch-sphere data for one qubit of a simulation's final state.\n\nComputes the qubit's reduced density matrix, so entangled qubits correctly\nappear as a shorter (mixed) Bloch vector inside the sphere.",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/visualizations/circuit/{circuitId}/diagram": {
+      "get": {
+        "operationId": "VisualizationController_getCircuitDiagram",
+        "parameters": [
+          {
+            "name": "circuitId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Circuit diagram (SVG or structured JSON) for a stored circuit.",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/visualizations/histogram/{simulationId}": {
+      "get": {
+        "operationId": "VisualizationController_getHistogram",
+        "parameters": [
+          {
+            "name": "simulationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Measurement histogram for a simulation (per basis state).",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/visualizations/state-3d/{simulationId}": {
+      "get": {
+        "operationId": "VisualizationController_get3DState",
+        "parameters": [
+          {
+            "name": "simulationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "3D state data (amplitude magnitude + phase per basis state).",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/visualizations/export": {
+      "post": {
+        "operationId": "VisualizationController_exportVisualization",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export a visualization payload as a downloadable file.",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/advanced/error-correction/codes": {
+      "get": {
+        "operationId": "AdvancedFeaturesController_getQECCodes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/error-correction/{codeId}/encode": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_encodeCircuit",
+        "parameters": [
+          {
+            "name": "codeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Encode a logical state with the chosen code.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/error-correction/syndrome": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_measureSyndrome",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Measure the syndrome of an encoded logical state.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/noise/channels": {
+      "get": {
+        "operationId": "AdvancedFeaturesController_getNoiseChannels",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/noise/apply": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_applyNoise",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate a set of noise channels against the model.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/noise/characterize": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_characterizeNoise",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Characterize a device from one of the built-in noise models.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/noise/simulate": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_simulateNoise",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateNoiseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run a circuit under noise on the density-matrix engine.\n\nThe configured channels are applied to each qubit a gate touches, after\nthat gate. Returns the diagonal probabilities, sampled counts, the purity\nTr(ρ²) (1 = pure, lower = more mixed), and optionally the fidelity against\nthe noiseless state.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/ml/vqe/ansatz": {
+      "get": {
+        "operationId": "AdvancedFeaturesController_getVQEAnsatzTypes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/ml/vqe/run": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_runVQE",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run a real VQE optimization.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/ml/kernel/matrix": {
+      "post": {
+        "operationId": "AdvancedFeaturesController_getKernelMatrix",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Compute a real quantum kernel matrix for the given data.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/batch/execute": {
+      "post": {
+        "operationId": "AdvancedOrchestrationController_batchExecute",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute a batch of stored circuits, recording each run and the batch.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/batch/{batchId}/results": {
+      "get": {
+        "operationId": "AdvancedOrchestrationController_getBatchResults",
+        "parameters": [
+          {
+            "name": "batchId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a batch's results, resolving each entry's recorded simulation.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/api/v1/advanced/pipeline/run": {
+      "post": {
+        "operationId": "AdvancedOrchestrationController_runPipeline",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run an analysis pipeline (ordered named stages) over a stored circuit.",
+        "tags": [
+          "Advanced"
+        ]
+      }
+    },
+    "/io/formats": {
+      "get": {
+        "operationId": "IOController_getSupportedFormats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get list of supported formats.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/import": {
+      "post": {
+        "operationId": "IOController_importCircuit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Import circuit from external format.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/export": {
+      "post": {
+        "operationId": "IOController_exportCircuit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Export circuit to external format.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/convert": {
+      "post": {
+        "operationId": "IOController_convertCircuit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Convert between formats.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/validate": {
+      "post": {
+        "operationId": "IOController_validateCircuit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Validate circuit data.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/detect": {
+      "post": {
+        "operationId": "IOController_detectFormat",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Detect format from content.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/io/formats/{name}": {
+      "get": {
+        "operationId": "IOController_getFormatInfo",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get format adapter info.",
+        "tags": [
+          "IO"
+        ]
+      }
+    },
+    "/visualization/bloch-sphere": {
+      "post": {
+        "operationId": "VisualizationController_generateBlochSphere",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlochSphereDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generate Bloch sphere visualization data",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/circuit-diagram": {
+      "post": {
+        "operationId": "VisualizationController_generateCircuitDiagram",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CircuitDiagramDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generate circuit diagram",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/circuit-svg": {
+      "post": {
+        "operationId": "VisualizationController_exportCircuitSVG",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CircuitDiagramDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Export circuit to SVG",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/amplitudes": {
+      "post": {
+        "operationId": "VisualizationController_generateAmplitudeVisualization",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AmplitudeVisualizationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generate amplitude visualization",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/state-transition": {
+      "post": {
+        "operationId": "VisualizationController_generateStateTransition",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnimationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generate state transition animation frames",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/entanglement-graph": {
+      "post": {
+        "operationId": "VisualizationController_generateEntanglementGraph",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntanglementGraphDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generate entanglement graph",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization/preview-effect": {
+      "post": {
+        "operationId": "VisualizationController_previewObserverEffect",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Preview observer effect",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/visualization": {
+      "get": {
+        "operationId": "VisualizationController_getVisualizationInfo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get visualization info",
+        "tags": [
+          "Visualizations"
+        ]
+      }
+    },
+    "/api/v1/jobs": {
+      "post": {
+        "operationId": "JobsController_submit",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitSimulationJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Submit an asynchronous simulation job. Returns 202 with the queued job.",
+        "tags": [
+          "Jobs"
+        ]
+      },
+      "get": {
+        "operationId": "JobsController_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the authenticated user's jobs, newest first.",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/{id}": {
+      "get": {
+        "operationId": "JobsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fetch a single job (status, progress, result).",
+        "tags": [
+          "Jobs"
+        ]
+      },
+      "delete": {
+        "operationId": "JobsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a job.",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/{id}/cancel": {
+      "post": {
+        "operationId": "JobsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel a still-queued job.",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "casimirQ API",
+    "description": "REST API for the casimirQ quantum circuit simulation platform: authentication, circuits, simulation, asynchronous jobs, algorithms, visualizations, and advanced features (error correction, noise, quantum ML).",
+    "version": "1.0.0",
+    "contact": {},
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Login, signup, token refresh, and identity"
+    },
+    {
+      "name": "Circuits",
+      "description": "Create, read, update, delete circuits and simulate them"
+    },
+    {
+      "name": "Simulations",
+      "description": "Synchronous simulation runs and history"
+    },
+    {
+      "name": "Jobs",
+      "description": "Asynchronous job engine: submit, poll, cancel"
+    },
+    {
+      "name": "Algorithms",
+      "description": "Pre-built quantum algorithms (QFT, Grover, Shor, VQE, QAOA, ...)"
+    },
+    {
+      "name": "Visualizations",
+      "description": "Bloch sphere, circuit diagrams, histograms"
+    },
+    {
+      "name": "Advanced",
+      "description": "Error correction, noise modeling, quantum machine learning"
+    },
+    {
+      "name": "IO",
+      "description": "Import / export circuits (QASM and other formats)"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1",
+      "description": "Docker (nginx single-origin)"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Local backend"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "QFTDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 16
+          }
+        },
+        "required": [
+          "n"
+        ]
+      },
+      "GroverDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "markedItem": {
+            "type": "number",
+            "minimum": 0
+          },
+          "iterations": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "n",
+          "markedItem"
+        ]
+      },
+      "VQEDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "hamiltonian": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "maxIterations": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "n",
+          "hamiltonian"
+        ]
+      },
+      "QAOADto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "p": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "n",
+          "edges"
+        ]
+      },
+      "TeleportDto": {
+        "type": "object",
+        "properties": {
+          "alpha": {
+            "type": "number"
+          },
+          "beta": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "alpha",
+          "beta"
+        ]
+      },
+      "ShorDto": {
+        "type": "object",
+        "properties": {
+          "N": {
+            "type": "number",
+            "minimum": 2
+          }
+        },
+        "required": [
+          "N"
+        ]
+      },
+      "SimulateNoiseDto": {
+        "type": "object",
+        "properties": {
+          "numQubits": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "noise": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "shots": {
+            "type": "number",
+            "minimum": 1
+          },
+          "seed": {
+            "type": "number"
+          },
+          "computeFidelity": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "numQubits"
+        ]
+      },
+      "ImportDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ExportDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ConvertDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ValidateDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "BlochSphereDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CircuitDiagramDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "AmplitudeVisualizationDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "AnimationDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "EntanglementGraphDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SubmitSimulationJobDto": {
+        "type": "object",
+        "properties": {
+          "circuitName": {
+            "type": "string"
+          },
+          "numQubits": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "engine": {
+            "type": "string"
+          },
+          "shots": {
+            "type": "number",
+            "minimum": 1
+          },
+          "seed": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "numQubits"
+        ]
+      }
+    }
+  }
+}
