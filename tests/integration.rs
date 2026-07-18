@@ -282,7 +282,9 @@ async fn advanced_density_matrix_noise_simulation() {
 
 #[tokio::test]
 async fn backends_list_and_run() {
-    let Some(cfg) = config() else { return; };
+    let Some(cfg) = config() else {
+        return;
+    };
     let client = authed_client(&cfg).await;
     use casq_sdk::backends::BackendRunOptions;
 
@@ -301,7 +303,14 @@ async fn backends_list_and_run() {
     // Local simulator: exact, pure result.
     let local = client
         .backends()
-        .run("local-simulator", &bell, BackendRunOptions { shots: Some(1000), ..Default::default() })
+        .run(
+            "local-simulator",
+            &bell,
+            BackendRunOptions {
+                shots: Some(1000),
+                ..Default::default()
+            },
+        )
         .await
         .expect("run local");
     let total: u64 = local.counts.values().sum();
@@ -311,7 +320,14 @@ async fn backends_list_and_run() {
     // gates (CNOT, not H) are native.
     let emulated = client
         .backends()
-        .run("emulated-qpu", &bell, BackendRunOptions { shots: Some(1000), ..Default::default() })
+        .run(
+            "emulated-qpu",
+            &bell,
+            BackendRunOptions {
+                shots: Some(1000),
+                ..Default::default()
+            },
+        )
         .await
         .expect("run emulated");
     assert!(emulated.purity().unwrap() < 1.0);
