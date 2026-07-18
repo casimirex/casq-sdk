@@ -1663,6 +1663,43 @@
           "Backends"
         ]
       }
+    },
+    "/api/v1/transpile": {
+      "post": {
+        "operationId": "TranspilerController_transpile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranspileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Decompose a circuit into the native gate basis.",
+        "tags": [
+          "Transpiler"
+        ]
+      }
     }
   },
   "info": {
@@ -1973,6 +2010,25 @@
             "type": "number"
           },
           "noise": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "numQubits"
+        ]
+      },
+      "TranspileDto": {
+        "type": "object",
+        "properties": {
+          "numQubits": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "operations": {
             "type": "array",
             "items": {
               "type": "object"

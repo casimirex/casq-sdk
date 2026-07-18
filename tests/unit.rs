@@ -7,6 +7,7 @@ use casq_sdk::advanced::{
 };
 use casq_sdk::backends::{Backend, BackendRunResult};
 use casq_sdk::jobs::{Job, JobStatus};
+use casq_sdk::TranspileResult;
 use casq_sdk::{Circuit, Engine, Operation, RunOptions, SimulationResult};
 
 #[test]
@@ -281,4 +282,31 @@ fn completed_job_exposes_result_and_backend() {
     assert_eq!(result.counts()["00"], 1000);
     assert_eq!(result.backend_id(), Some("emulated-qpu"));
     assert_eq!(result.execution_time_ms(), Some(0.7));
+}
+
+#[test]
+fn transpile_result_parses_and_builds_a_circuit() {
+    let raw = r#"{
+        "operations":[
+            {"gate":"rz","targets":[0],"params":[3.14159]},
+            {"gate":"ry","targets":[0],"params":[1.5708]},
+            {"gate":"cx","targets":[0,1]}
+        ],
+        "basis":["id","rz","ry","cx"],
+        "originalGateCount":2,"transpiledGateCount":3,
+        "fullyNative":true,"unsupported":[]
+    }"#;
+    let r: TranspileResult = serde_json::from_str(raw).unwrap();
+    assert!(r.fully_native);
+    assert_eq!(r.original_gate_count, 2);
+    assert_eq!(r.transpiled_gate_count, 3);
+    assert_eq!(r.basis, vec!["id", "rz", "ry", "cx"]);
+
+    // Every operation is in the native basis, and it rebuilds into a Circuit.
+    for op in &r.operations {
+        assert!(r.basis.contains(&op.gate));
+    }
+    let circuit = r.to_circuit(2);
+    assert_eq!(circuit.num_qubits(), 2);
+    assert_eq!(circuit.operations().len(), 3);
 }

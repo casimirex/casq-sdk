@@ -59,6 +59,8 @@ const ENDPOINTS: &[(&str, &str)] = &[
     ("get", "/api/v1/jobs/{id}"),
     ("post", "/api/v1/jobs/{id}/cancel"),
     ("delete", "/api/v1/jobs/{id}"),
+    // transpiler (client.transpile)
+    ("post", "/api/v1/transpile"),
 ];
 
 #[test]
@@ -119,6 +121,7 @@ fn sdk_request_fields_match_dto_schemas() {
             "RunOnBackendDto",
             &["numQubits", "operations", "shots", "seed", "noise"],
         ),
+        ("TranspileDto", &["numQubits", "operations"]),
         (
             "SubmitSimulationJobDto",
             &[

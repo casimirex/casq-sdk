@@ -185,6 +185,25 @@ println!("purity {:?}, native fraction {:?}",
 | `get(id)` | `Backend` |
 | `run(id, circuit, opts)` | `BackendRunResult` |
 
+## Transpilation
+
+`client.transpile()` decomposes a circuit into the native gate basis a real
+device would run (`rz`, `ry`, `cx`) — non-native gates are rewritten, and the
+result reports the gate-count cost.
+
+```rust
+let mut bell = Circuit::new(2);
+bell.h(0).cx(0, 1);
+
+let t = client.transpile(&bell).await?;
+println!("{} -> {} gates, fully native: {}",
+    t.original_gate_count, t.transpiled_gate_count, t.fully_native);
+
+// Run the native circuit.
+let native = t.to_circuit(2);
+let result = client.run(&native, RunOptions::new().shots(1000)).await?;
+```
+
 ## Async jobs
 
 `client.jobs()` submits simulations to the background job engine (optionally on a

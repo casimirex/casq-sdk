@@ -8,6 +8,7 @@ use crate::error::{Error, Result};
 use crate::jobs::Jobs;
 use crate::models::{AuthToken, CircuitList, CircuitRecord};
 use crate::simulation::{RunOptions, SimulationResult};
+use crate::transpile::TranspileResult;
 use reqwest::{Method, StatusCode};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -151,6 +152,15 @@ impl Client {
         }
         // The path id is ignored for inline runs; use a stable sentinel.
         self.post("/circuits/inline/simulate", &body).await
+    }
+
+    /// Decompose a circuit into the native gate basis (`rz`, `ry`, `cx`).
+    pub async fn transpile(&self, circuit: &Circuit) -> Result<TranspileResult> {
+        let body = serde_json::json!({
+            "numQubits": circuit.num_qubits(),
+            "operations": circuit.operations(),
+        });
+        self.post("/transpile", &body).await
     }
 
     /// Simulate a previously stored circuit by id.

@@ -52,6 +52,7 @@ mod error;
 pub mod jobs;
 mod models;
 mod simulation;
+pub mod transpile;
 
 pub use circuit::{Circuit, Operation};
 pub use client::Client;
@@ -60,3 +61,4 @@ pub use models::{AuthToken, CircuitList, CircuitRecord, CircuitSummary, Paginati
 pub use simulation::{
     Amplitude, Engine, RunOptions, SimulationMetadata, SimulationOutputs, SimulationResult,
 };
+pub use transpile::TranspileResult;

@@ -395,3 +395,37 @@ async fn jobs_submit_wait_and_target_a_backend() {
     client.jobs().delete(&submitted.id).await.expect("delete");
     client.jobs().delete(&emulated.id).await.expect("delete");
 }
+
+#[tokio::test]
+async fn transpile_decomposes_to_native_basis() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let mut bell = Circuit::new(2);
+    bell.h(0).cx(0, 1);
+
+    let result = client.transpile(&bell).await.expect("transpile");
+    assert!(result.fully_native);
+    assert!(result.unsupported.is_empty());
+    // H decomposes to rotations, so the transpiled circuit is larger and native.
+    assert!(result.transpiled_gate_count >= result.original_gate_count);
+    for op in &result.operations {
+        assert!(
+            result.basis.contains(&op.gate),
+            "non-native gate {}",
+            op.gate
+        );
+    }
+
+    // The transpiled circuit runs and measures like the original Bell state.
+    let native = result.to_circuit(2);
+    let run = client
+        .run(&native, casq_sdk::RunOptions::new().shots(1000))
+        .await
+        .expect("run native");
+    for state in run.counts().keys() {
+        assert!(state == "00" || state == "11", "unexpected state {state}");
+    }
+}
