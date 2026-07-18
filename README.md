@@ -185,6 +185,12 @@ CASQ_EMAIL=admin@example.com CASQ_PASSWORD=admin123 \
 
 The integration tests are skipped automatically when `CASQ_BASE_URL` is unset.
 
+## Related
+
+- [casimirQ](../casimirQ) — the quantum simulation platform this client targets.
+- [casq-tutorial](../casq-tutorial) — a novice-to-professional course built on this SDK.
+- [Ecosystem roadmap](../casimirQ/ROADMAP.md) — where the platform, SDK, and tutorial are headed.
+
 ## License
 
 MIT
