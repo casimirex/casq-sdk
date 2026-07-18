@@ -1,2 +1,7 @@
 /target
 Cargo.lock
+
+# Secrets / local environment — never commit.
+.env
+.env.local
+.env.*.local
