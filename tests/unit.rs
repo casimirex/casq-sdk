@@ -5,6 +5,7 @@ use casq_sdk::advanced::{
     KernelMatrix, MlPauliTerm, MlVqeResult, NoiseChannel, NoiseChannelConfig,
     NoiseSimulationResult, QecCode,
 };
+use casq_sdk::backends::{Backend, BackendRunResult};
 use casq_sdk::{Circuit, Engine, Operation, RunOptions, SimulationResult};
 
 #[test]
@@ -207,4 +208,36 @@ fn noise_simulation_result_without_fidelity() {
         "probabilities":{"0":0.5,"1":0.5},"counts":{"0":500,"1":500},"executionTimeMs":0.3}"#;
     let r: NoiseSimulationResult = serde_json::from_str(raw).unwrap();
     assert_eq!(r.fidelity, None);
+}
+
+#[test]
+fn backend_parses_with_capabilities() {
+    let raw = r#"{
+        "id":"emulated-qpu","name":"Emulated QPU","type":"hardware-emulator",
+        "description":"emulated","available":true,
+        "capabilities":{"maxQubits":7,"nativeGates":["rz","sx","x","cx"],
+            "supportsNoise":true,"connectivity":"linear","simulated":true}
+    }"#;
+    let b: Backend = serde_json::from_str(raw).unwrap();
+    assert_eq!(b.id, "emulated-qpu");
+    assert_eq!(b.backend_type, "hardware-emulator");
+    assert_eq!(b.capabilities.max_qubits, 7);
+    assert_eq!(b.capabilities.connectivity, "linear");
+    assert!(!b.capabilities.native_gates.contains(&"h".to_string()));
+}
+
+#[test]
+fn backend_run_result_exposes_metadata_accessors() {
+    let raw = r#"{
+        "backendId":"emulated-qpu","numQubits":2,"shots":1000,
+        "counts":{"00":480,"11":506,"01":7,"10":7},
+        "probabilities":{"00":0.48,"11":0.506,"01":0.007,"10":0.007},
+        "metadata":{"executionTimeMs":0.7,"purity":0.9609,"nativeGateFraction":0.5,"emulated":true}
+    }"#;
+    let r: BackendRunResult = serde_json::from_str(raw).unwrap();
+    assert_eq!(r.backend_id, "emulated-qpu");
+    assert_eq!(r.counts["00"], 480);
+    assert_eq!(r.execution_time_ms(), Some(0.7));
+    assert_eq!(r.purity(), Some(0.9609));
+    assert_eq!(r.native_gate_fraction(), Some(0.5));
 }

@@ -158,6 +158,33 @@ println!("purity {:.3}, fidelity {:.3}", result.purity, result.fidelity.unwrap()
 | `kernel_matrix(data, feature_map)` | `KernelMatrix` |
 | `simulate_noise(circuit, noise, opts)` | `NoiseSimulationResult` (density-matrix engine) |
 
+## Backends
+
+`client.backends()` lists the execution targets (simulators, an emulated device,
+and — when configured — a real QPU) and runs a circuit on a chosen one. Selecting
+where a circuit runs is just a backend id.
+
+```rust
+use casq_sdk::backends::BackendRunOptions;
+
+let backends = client.backends().list().await?;   // id, type, availability, capabilities
+
+let mut bell = Circuit::new(2);
+bell.h(0).cx(0, 1);
+
+let result = client.backends()
+    .run("emulated-qpu", &bell, BackendRunOptions { shots: Some(2000), ..Default::default() })
+    .await?;
+println!("purity {:?}, native fraction {:?}",
+    result.purity(), result.native_gate_fraction());
+```
+
+| Method | Returns |
+| --- | --- |
+| `list()` | `Vec<Backend>` |
+| `get(id)` | `Backend` |
+| `run(id, circuit, opts)` | `BackendRunResult` |
+
 ## Authentication
 
 `login`/`signup` store the returned JWT on the client for subsequent calls. You

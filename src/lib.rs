@@ -45,6 +45,7 @@
 
 pub mod advanced;
 pub mod algorithms;
+pub mod backends;
 mod circuit;
 mod client;
 mod error;

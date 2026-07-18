@@ -49,6 +49,10 @@ const ENDPOINTS: &[(&str, &str)] = &[
     ("post", "/api/v1/advanced/ml/vqe/run"),
     ("post", "/api/v1/advanced/ml/kernel/matrix"),
     ("post", "/api/v1/advanced/noise/simulate"),
+    // backends (backends.rs)
+    ("get", "/api/v1/backends"),
+    ("get", "/api/v1/backends/{id}"),
+    ("post", "/api/v1/backends/{id}/run"),
 ];
 
 #[test]
@@ -104,6 +108,10 @@ fn sdk_request_fields_match_dto_schemas() {
                 "seed",
                 "computeFidelity",
             ],
+        ),
+        (
+            "RunOnBackendDto",
+            &["numQubits", "operations", "shots", "seed", "noise"],
         ),
     ];
 

@@ -279,3 +279,41 @@ async fn advanced_density_matrix_noise_simulation() {
         .expect("damped run");
     assert!((damped.probabilities.get("0").copied().unwrap_or(0.0) - 0.5).abs() < 1e-6);
 }
+
+#[tokio::test]
+async fn backends_list_and_run() {
+    let Some(cfg) = config() else { return; };
+    let client = authed_client(&cfg).await;
+    use casq_sdk::backends::BackendRunOptions;
+
+    let backends = client.backends().list().await.expect("list backends");
+    let ids: Vec<&str> = backends.iter().map(|b| b.id.as_str()).collect();
+    assert!(ids.contains(&"local-simulator"));
+    assert!(ids.contains(&"emulated-qpu"));
+    // The remote QPU is registered but unavailable without credentials.
+    let remote = backends.iter().find(|b| b.id == "remote-qpu").unwrap();
+    assert!(!remote.available);
+    assert!(!remote.capabilities.simulated);
+
+    let mut bell = Circuit::new(2);
+    bell.h(0).cx(0, 1);
+
+    // Local simulator: exact, pure result.
+    let local = client
+        .backends()
+        .run("local-simulator", &bell, BackendRunOptions { shots: Some(1000), ..Default::default() })
+        .await
+        .expect("run local");
+    let total: u64 = local.counts.values().sum();
+    assert_eq!(total, 1000);
+
+    // Emulated QPU: baseline device noise degrades the state, and only half the
+    // gates (CNOT, not H) are native.
+    let emulated = client
+        .backends()
+        .run("emulated-qpu", &bell, BackendRunOptions { shots: Some(1000), ..Default::default() })
+        .await
+        .expect("run emulated");
+    assert!(emulated.purity().unwrap() < 1.0);
+    assert_eq!(emulated.native_gate_fraction(), Some(0.5));
+}

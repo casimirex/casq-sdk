@@ -2,6 +2,7 @@
 
 use crate::advanced::Advanced;
 use crate::algorithms::Algorithms;
+use crate::backends::Backends;
 use crate::circuit::Circuit;
 use crate::error::{Error, Result};
 use crate::models::{AuthToken, CircuitList, CircuitRecord};
@@ -170,6 +171,11 @@ impl Client {
     /// Access the advanced-features API (error correction, noise, quantum ML).
     pub fn advanced(&self) -> Advanced<'_> {
         Advanced { client: self }
+    }
+
+    /// Access the execution backends API (simulators, emulated/real hardware).
+    pub fn backends(&self) -> Backends<'_> {
+        Backends { client: self }
     }
 
     // --- Internal request helpers (also used by the algorithms module) ---

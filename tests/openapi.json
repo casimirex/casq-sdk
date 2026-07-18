@@ -1568,6 +1568,101 @@
           "Jobs"
         ]
       }
+    },
+    "/api/v1/backends": {
+      "get": {
+        "operationId": "BackendsController_listBackends",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the available execution backends and their capabilities.",
+        "tags": [
+          "Backends"
+        ]
+      }
+    },
+    "/api/v1/backends/{id}": {
+      "get": {
+        "operationId": "BackendsController_getBackend",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fetch a single backend's details.",
+        "tags": [
+          "Backends"
+        ]
+      }
+    },
+    "/api/v1/backends/{id}/run": {
+      "post": {
+        "operationId": "BackendsController_run",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunOnBackendDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run a circuit on the chosen backend.",
+        "tags": [
+          "Backends"
+        ]
+      }
     }
   },
   "info": {
@@ -1840,6 +1935,37 @@
           },
           "seed": {
             "type": "number"
+          }
+        },
+        "required": [
+          "numQubits"
+        ]
+      },
+      "RunOnBackendDto": {
+        "type": "object",
+        "properties": {
+          "numQubits": {
+            "type": "number",
+            "minimum": 1
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "shots": {
+            "type": "number",
+            "minimum": 1
+          },
+          "seed": {
+            "type": "number"
+          },
+          "noise": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         },
         "required": [
