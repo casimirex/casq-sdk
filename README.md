@@ -132,6 +132,17 @@ let vqe = adv.ml_vqe(
     VqeRunOptions { max_iterations: Some(50), ..Default::default() },
 ).await?;
 let kernel = adv.kernel_matrix(&data, Some("zz")).await?; // quantum kernel (QSVM)
+
+// Density-matrix noise simulation
+use casq_sdk::{Circuit, advanced::{NoiseChannelConfig, NoiseSimOptions}};
+let mut bell = Circuit::new(2);
+bell.h(0).cx(0, 1);
+let result = adv.simulate_noise(
+    &bell,
+    &[NoiseChannelConfig::depolarizing(0.1)],
+    NoiseSimOptions { compute_fidelity: true, shots: Some(2000), ..Default::default() },
+).await?;
+println!("purity {:.3}, fidelity {:.3}", result.purity, result.fidelity.unwrap());
 ```
 
 | Method | Returns |
@@ -145,6 +156,7 @@ let kernel = adv.kernel_matrix(&data, Some("zz")).await?; // quantum kernel (QSV
 | `ml_catalog()` | `MlCatalog` |
 | `ml_vqe(hamiltonian, ansatz, opts)` | `MlVqeResult` |
 | `kernel_matrix(data, feature_map)` | `KernelMatrix` |
+| `simulate_noise(circuit, noise, opts)` | `NoiseSimulationResult` (density-matrix engine) |
 
 ## Authentication
 

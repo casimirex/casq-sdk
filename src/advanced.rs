@@ -5,6 +5,7 @@
 //! noise channels and device models, and quantum machine-learning primitives
 //! (a VQE optimizer with selectable ansatze, and quantum kernel matrices).
 
+use crate::circuit::Circuit;
 use crate::client::Client;
 use crate::error::Result;
 use serde::{Deserialize, Serialize};
@@ -242,6 +243,112 @@ pub struct VqeRunOptions {
     pub shots: Option<u32>,
 }
 
+/// Parameters for a noise channel (only the relevant field is used).
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct NoiseParams {
+    /// Probability (depolarizing / bit-flip / phase-flip / bit-phase-flip).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub p: Option<f64>,
+    /// Amplitude-damping rate (T1).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gamma: Option<f64>,
+    /// Phase-damping rate (T2).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lambda: Option<f64>,
+}
+
+/// A noise channel applied to each qubit a gate touches, after that gate.
+#[derive(Clone, Debug, Serialize)]
+pub struct NoiseChannelConfig {
+    /// Channel type, e.g. `"depolarizing"`, `"amplitude_damping"`.
+    #[serde(rename = "type")]
+    pub channel_type: String,
+    /// Channel parameters.
+    pub params: NoiseParams,
+}
+
+impl NoiseChannelConfig {
+    /// Depolarizing channel with probability `p` (reaches I/2 at p = 1).
+    pub fn depolarizing(p: f64) -> Self {
+        Self::with_p("depolarizing", p)
+    }
+    /// Bit-flip channel (applies X) with probability `p`.
+    pub fn bit_flip(p: f64) -> Self {
+        Self::with_p("bit_flip", p)
+    }
+    /// Phase-flip channel (applies Z) with probability `p`.
+    pub fn phase_flip(p: f64) -> Self {
+        Self::with_p("phase_flip", p)
+    }
+    /// Bit-phase-flip channel (applies Y) with probability `p`.
+    pub fn bit_phase_flip(p: f64) -> Self {
+        Self::with_p("bit_phase_flip", p)
+    }
+    /// Amplitude-damping (energy loss, T1) with rate `gamma`.
+    pub fn amplitude_damping(gamma: f64) -> Self {
+        Self {
+            channel_type: "amplitude_damping".into(),
+            params: NoiseParams {
+                gamma: Some(gamma),
+                ..Default::default()
+            },
+        }
+    }
+    /// Phase-damping (dephasing, T2) with rate `lambda`.
+    pub fn phase_damping(lambda: f64) -> Self {
+        Self {
+            channel_type: "phase_damping".into(),
+            params: NoiseParams {
+                lambda: Some(lambda),
+                ..Default::default()
+            },
+        }
+    }
+
+    fn with_p(channel_type: &str, p: f64) -> Self {
+        Self {
+            channel_type: channel_type.into(),
+            params: NoiseParams {
+                p: Some(p),
+                ..Default::default()
+            },
+        }
+    }
+}
+
+/// Options for a density-matrix noise simulation.
+#[derive(Clone, Debug, Default)]
+pub struct NoiseSimOptions {
+    /// Measurement shots to sample from the final distribution.
+    pub shots: Option<u32>,
+    /// Seed for reproducible sampling.
+    pub seed: Option<u32>,
+    /// Also compute the fidelity against the noiseless state.
+    pub compute_fidelity: bool,
+}
+
+/// The result of a density-matrix noise simulation.
+#[derive(Clone, Debug, Deserialize)]
+pub struct NoiseSimulationResult {
+    /// The engine used (`"density-matrix"`).
+    pub engine: String,
+    /// Number of qubits simulated.
+    #[serde(rename = "numQubits")]
+    pub num_qubits: usize,
+    /// Purity Tr(ρ²) ∈ [1/2ⁿ, 1]; 1 is pure, lower is more mixed.
+    pub purity: f64,
+    /// Fidelity against the noiseless state, if requested.
+    #[serde(default)]
+    pub fidelity: Option<f64>,
+    /// Diagonal of ρ: probability of each basis state.
+    pub probabilities: HashMap<String, f64>,
+    /// Sampled measurement counts.
+    pub counts: HashMap<String, u64>,
+    /// Execution time in milliseconds.
+    #[serde(rename = "executionTimeMs")]
+    pub execution_time_ms: f64,
+}
+
 /// Handle for the advanced-features API, borrowed from a [`Client`].
 pub struct Advanced<'a> {
     pub(crate) client: &'a Client,
@@ -361,5 +468,35 @@ impl Advanced<'_> {
             body["featureMap"] = serde_json::json!(fm);
         }
         self.client.post("/advanced/ml/kernel/matrix", &body).await
+    }
+
+    // --- Noise simulation (density-matrix engine) ---
+
+    /// Run `circuit` under noise on the density-matrix engine.
+    ///
+    /// Each channel in `noise` is applied to every qubit a gate touches, after
+    /// that gate. Returns the diagonal probabilities, sampled counts, the purity
+    /// Tr(ρ²), and (if requested) the fidelity against the noiseless state.
+    pub async fn simulate_noise(
+        &self,
+        circuit: &Circuit,
+        noise: &[NoiseChannelConfig],
+        options: NoiseSimOptions,
+    ) -> Result<NoiseSimulationResult> {
+        let mut body = serde_json::json!({
+            "numQubits": circuit.num_qubits(),
+            "operations": circuit.operations(),
+            "noise": noise,
+        });
+        if let Some(s) = options.shots {
+            body["shots"] = serde_json::json!(s);
+        }
+        if let Some(s) = options.seed {
+            body["seed"] = serde_json::json!(s);
+        }
+        if options.compute_fidelity {
+            body["computeFidelity"] = serde_json::json!(true);
+        }
+        self.client.post("/advanced/noise/simulate", &body).await
     }
 }

@@ -208,3 +208,74 @@ async fn advanced_ml_vqe_runs() {
         .expect("ml vqe");
     assert!(!r.optimal_params.is_empty());
 }
+
+#[tokio::test]
+async fn advanced_density_matrix_noise_simulation() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+    use casq_sdk::advanced::{NoiseChannelConfig, NoiseSimOptions};
+
+    // A Bell circuit.
+    let mut bell = Circuit::new(2);
+    bell.h(0).cx(0, 1);
+
+    // Noiseless: pure state, fidelity 1.
+    let clean = client
+        .advanced()
+        .simulate_noise(
+            &bell,
+            &[],
+            NoiseSimOptions {
+                compute_fidelity: true,
+                ..Default::default()
+            },
+        )
+        .await
+        .expect("noiseless run");
+    assert_eq!(clean.engine, "density-matrix");
+    assert!(
+        (clean.purity - 1.0).abs() < 1e-6,
+        "expected pure state, got {}",
+        clean.purity
+    );
+    assert!((clean.fidelity.unwrap() - 1.0).abs() < 1e-6);
+
+    // Under depolarizing noise: mixed state, lower fidelity, error states appear.
+    let noisy = client
+        .advanced()
+        .simulate_noise(
+            &bell,
+            &[NoiseChannelConfig::depolarizing(0.1)],
+            NoiseSimOptions {
+                compute_fidelity: true,
+                shots: Some(2000),
+                ..Default::default()
+            },
+        )
+        .await
+        .expect("noisy run");
+    assert!(
+        noisy.purity < 1.0,
+        "noise should reduce purity, got {}",
+        noisy.purity
+    );
+    assert!(noisy.fidelity.unwrap() < 1.0);
+    let total: u64 = noisy.counts.values().sum();
+    assert_eq!(total, 2000);
+
+    // Amplitude damping on |1> relaxes toward |0>.
+    let mut one = Circuit::new(1);
+    one.x(0);
+    let damped = client
+        .advanced()
+        .simulate_noise(
+            &one,
+            &[NoiseChannelConfig::amplitude_damping(0.5)],
+            NoiseSimOptions::default(),
+        )
+        .await
+        .expect("damped run");
+    assert!((damped.probabilities.get("0").copied().unwrap_or(0.0) - 0.5).abs() < 1e-6);
+}

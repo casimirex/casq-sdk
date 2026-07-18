@@ -1,7 +1,10 @@
 //! Offline unit tests exercising serialization / deserialization against the
 //! exact JSON shapes the casimirQ API uses. These need no server.
 
-use casq_sdk::advanced::{KernelMatrix, MlPauliTerm, MlVqeResult, NoiseChannel, QecCode};
+use casq_sdk::advanced::{
+    KernelMatrix, MlPauliTerm, MlVqeResult, NoiseChannel, NoiseChannelConfig,
+    NoiseSimulationResult, QecCode,
+};
 use casq_sdk::{Circuit, Engine, Operation, RunOptions, SimulationResult};
 
 #[test]
@@ -164,4 +167,44 @@ fn noise_channel_serializes_with_type_rename() {
     assert_eq!(json["type"], "depolarizing");
     assert_eq!(json["params"]["probability"], 0.01);
     assert_eq!(json["targets"], serde_json::json!([0]));
+}
+
+#[test]
+fn noise_channel_config_serializes_with_type_and_params() {
+    let depol = NoiseChannelConfig::depolarizing(0.1);
+    let j = serde_json::to_value(&depol).unwrap();
+    assert_eq!(j["type"], "depolarizing");
+    assert_eq!(j["params"]["p"], 0.1);
+    // Only the relevant param is present.
+    assert!(j["params"].get("gamma").is_none());
+
+    let ad = NoiseChannelConfig::amplitude_damping(0.25);
+    let j = serde_json::to_value(&ad).unwrap();
+    assert_eq!(j["type"], "amplitude_damping");
+    assert_eq!(j["params"]["gamma"], 0.25);
+    assert!(j["params"].get("p").is_none());
+}
+
+#[test]
+fn noise_simulation_result_parses() {
+    let raw = r#"{
+        "engine":"density-matrix","numQubits":2,"purity":0.68,"fidelity":0.82,
+        "probabilities":{"00":0.45,"11":0.45,"01":0.05,"10":0.05},
+        "counts":{"00":450,"11":450,"01":50,"10":50},
+        "executionTimeMs":1.2
+    }"#;
+    let r: NoiseSimulationResult = serde_json::from_str(raw).unwrap();
+    assert_eq!(r.engine, "density-matrix");
+    assert_eq!(r.num_qubits, 2);
+    assert_eq!(r.fidelity, Some(0.82));
+    assert_eq!(r.counts["00"], 450);
+    assert!(r.purity < 1.0);
+}
+
+#[test]
+fn noise_simulation_result_without_fidelity() {
+    let raw = r#"{"engine":"density-matrix","numQubits":1,"purity":0.5,
+        "probabilities":{"0":0.5,"1":0.5},"counts":{"0":500,"1":500},"executionTimeMs":0.3}"#;
+    let r: NoiseSimulationResult = serde_json::from_str(raw).unwrap();
+    assert_eq!(r.fidelity, None);
 }
