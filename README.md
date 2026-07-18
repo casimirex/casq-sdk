@@ -185,6 +185,34 @@ println!("purity {:?}, native fraction {:?}",
 | `get(id)` | `Backend` |
 | `run(id, circuit, opts)` | `BackendRunResult` |
 
+## Async jobs
+
+`client.jobs()` submits simulations to the background job engine (optionally on a
+chosen backend) and polls them. Submit returns immediately; `wait_for` blocks
+until the job settles.
+
+```rust
+use casq_sdk::jobs::{SubmitJobOptions, WaitOptions};
+
+let job = client.jobs().submit(&bell, SubmitJobOptions {
+    backend_id: Some("emulated-qpu".into()),   // run on any backend
+    shots: Some(2000),
+    ..Default::default()
+}).await?;
+
+let done = client.jobs().wait_for(&job.id, WaitOptions::default()).await?;
+if let Some(result) = done.result {
+    println!("counts = {:?}", result.counts());
+}
+```
+
+| Method | Returns |
+| --- | --- |
+| `submit(circuit, opts)` | `Job` (queued) |
+| `get(id)` / `list(page, limit)` | `Job` / `JobList` |
+| `wait_for(id, opts)` | `Job` (terminal) |
+| `cancel(id)` / `delete(id)` | `Job` / `()` |
+
 ## Authentication
 
 `login`/`signup` store the returned JWT on the client for subsequent calls. You

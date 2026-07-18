@@ -49,6 +49,7 @@ pub mod backends;
 mod circuit;
 mod client;
 mod error;
+pub mod jobs;
 mod models;
 mod simulation;
 

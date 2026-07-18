@@ -1929,6 +1929,17 @@
           "engine": {
             "type": "string"
           },
+          "backendId": {
+            "type": "string",
+            "description": "Run on a specific backend (see `GET /backends`). Defaults to the runner."
+          },
+          "noise": {
+            "description": "Noise channels, for backends that support them.",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "shots": {
             "type": "number",
             "minimum": 1

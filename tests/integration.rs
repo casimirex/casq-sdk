@@ -333,3 +333,65 @@ async fn backends_list_and_run() {
     assert!(emulated.purity().unwrap() < 1.0);
     assert_eq!(emulated.native_gate_fraction(), Some(0.5));
 }
+
+#[tokio::test]
+async fn jobs_submit_wait_and_target_a_backend() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+    use casq_sdk::jobs::{JobStatus, SubmitJobOptions, WaitOptions};
+
+    let mut bell = Circuit::new(2);
+    bell.h(0).cx(0, 1);
+
+    // Default (runner) path: submit -> queued -> wait -> completed with statevector.
+    let submitted = client
+        .jobs()
+        .submit(
+            &bell,
+            SubmitJobOptions {
+                shots: Some(1000),
+                ..Default::default()
+            },
+        )
+        .await
+        .expect("submit");
+    assert_eq!(submitted.status, JobStatus::Queued);
+
+    let done = client
+        .jobs()
+        .wait_for(&submitted.id, WaitOptions::default())
+        .await
+        .expect("wait");
+    assert_eq!(done.status, JobStatus::Completed);
+    let result = done.result.expect("result");
+    assert_eq!(result.results.counts.values().sum::<u64>(), 1000);
+    assert!(!result.results.statevector.is_empty());
+
+    // Backend-targeted: run on the emulated QPU — noisy, no statevector.
+    let emulated = client
+        .jobs()
+        .submit(
+            &bell,
+            SubmitJobOptions {
+                backend_id: Some("emulated-qpu".into()),
+                shots: Some(1000),
+                ..Default::default()
+            },
+        )
+        .await
+        .expect("submit emulated");
+    let done = client
+        .jobs()
+        .wait_for(&emulated.id, WaitOptions::default())
+        .await
+        .expect("wait emulated");
+    let result = done.result.expect("emulated result");
+    assert_eq!(result.backend_id(), Some("emulated-qpu"));
+    assert!(result.results.statevector.is_empty());
+
+    // Clean up.
+    client.jobs().delete(&submitted.id).await.expect("delete");
+    client.jobs().delete(&emulated.id).await.expect("delete");
+}

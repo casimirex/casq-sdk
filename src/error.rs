@@ -32,4 +32,11 @@ pub enum Error {
     /// A response body could not be (de)serialized into the expected shape.
     #[error("serialization error: {0}")]
     Serde(#[from] serde_json::Error),
+
+    /// A polling wait (e.g. [`crate::jobs::Jobs::wait_for`]) exceeded its deadline.
+    #[error("timed out after {after_ms} ms waiting for the job to finish")]
+    Timeout {
+        /// How long the wait ran before giving up, in milliseconds.
+        after_ms: u64,
+    },
 }

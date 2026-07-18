@@ -6,6 +6,7 @@ use casq_sdk::advanced::{
     NoiseSimulationResult, QecCode,
 };
 use casq_sdk::backends::{Backend, BackendRunResult};
+use casq_sdk::jobs::{Job, JobStatus};
 use casq_sdk::{Circuit, Engine, Operation, RunOptions, SimulationResult};
 
 #[test]
@@ -240,4 +241,44 @@ fn backend_run_result_exposes_metadata_accessors() {
     assert_eq!(r.execution_time_ms(), Some(0.7));
     assert_eq!(r.purity(), Some(0.9609));
     assert_eq!(r.native_gate_fraction(), Some(0.5));
+}
+
+#[test]
+fn job_status_terminality() {
+    assert!(JobStatus::Completed.is_terminal());
+    assert!(JobStatus::Failed.is_terminal());
+    assert!(JobStatus::Cancelled.is_terminal());
+    assert!(!JobStatus::Queued.is_terminal());
+    assert!(!JobStatus::Running.is_terminal());
+}
+
+#[test]
+fn queued_job_parses_without_result() {
+    let raw = r#"{
+        "id":"job-1","type":"simulation","status":"queued","progress":0,
+        "result":null,"error":null,
+        "createdAt":"t","updatedAt":"t","startedAt":null,"finishedAt":null
+    }"#;
+    let job: Job = serde_json::from_str(raw).unwrap();
+    assert_eq!(job.status, JobStatus::Queued);
+    assert!(job.result.is_none());
+    assert!(job.finished_at.is_none());
+}
+
+#[test]
+fn completed_job_exposes_result_and_backend() {
+    let raw = r#"{
+        "id":"job-2","type":"simulation","status":"completed","progress":1,
+        "result":{"status":"completed","numQubits":2,"requestedEngine":"emulated-qpu","shots":2000,
+            "results":{"statevector":[],"probabilities":{"00":0.5,"11":0.5},"counts":{"00":1000,"11":1000}},
+            "metadata":{"executionTimeMs":0.7,"backendId":"emulated-qpu","purity":0.961}},
+        "error":null,"createdAt":"t","updatedAt":"t","startedAt":"t","finishedAt":"t"
+    }"#;
+    let job: Job = serde_json::from_str(raw).unwrap();
+    assert_eq!(job.status, JobStatus::Completed);
+    let result = job.result.unwrap();
+    assert_eq!(result.requested_engine, "emulated-qpu");
+    assert_eq!(result.counts()["00"], 1000);
+    assert_eq!(result.backend_id(), Some("emulated-qpu"));
+    assert_eq!(result.execution_time_ms(), Some(0.7));
 }

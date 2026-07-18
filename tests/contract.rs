@@ -53,6 +53,12 @@ const ENDPOINTS: &[(&str, &str)] = &[
     ("get", "/api/v1/backends"),
     ("get", "/api/v1/backends/{id}"),
     ("post", "/api/v1/backends/{id}/run"),
+    // jobs (jobs.rs)
+    ("post", "/api/v1/jobs"),
+    ("get", "/api/v1/jobs"),
+    ("get", "/api/v1/jobs/{id}"),
+    ("post", "/api/v1/jobs/{id}/cancel"),
+    ("delete", "/api/v1/jobs/{id}"),
 ];
 
 #[test]
@@ -112,6 +118,19 @@ fn sdk_request_fields_match_dto_schemas() {
         (
             "RunOnBackendDto",
             &["numQubits", "operations", "shots", "seed", "noise"],
+        ),
+        (
+            "SubmitSimulationJobDto",
+            &[
+                "circuitName",
+                "numQubits",
+                "operations",
+                "engine",
+                "backendId",
+                "noise",
+                "shots",
+                "seed",
+            ],
         ),
     ];
 

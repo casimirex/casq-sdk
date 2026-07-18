@@ -5,6 +5,7 @@ use crate::algorithms::Algorithms;
 use crate::backends::Backends;
 use crate::circuit::Circuit;
 use crate::error::{Error, Result};
+use crate::jobs::Jobs;
 use crate::models::{AuthToken, CircuitList, CircuitRecord};
 use crate::simulation::{RunOptions, SimulationResult};
 use reqwest::{Method, StatusCode};
@@ -178,6 +179,11 @@ impl Client {
         Backends { client: self }
     }
 
+    /// Access the asynchronous job engine (submit, poll, cancel).
+    pub fn jobs(&self) -> Jobs<'_> {
+        Jobs { client: self }
+    }
+
     // --- Internal request helpers (also used by the algorithms module) ---
 
     pub(crate) async fn get<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
@@ -186,6 +192,10 @@ impl Client {
 
     pub(crate) async fn post<T: DeserializeOwned>(&self, path: &str, body: &Value) -> Result<T> {
         self.send(Method::POST, path, Some(body), true).await
+    }
+
+    pub(crate) async fn delete(&self, path: &str) -> Result<()> {
+        self.send_discard(Method::DELETE, path, None).await
     }
 
     /// Send a request and deserialize the JSON body into `T`.
