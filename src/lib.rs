@@ -61,4 +61,4 @@ pub use models::{AuthToken, CircuitList, CircuitRecord, CircuitSummary, Paginati
 pub use simulation::{
     Amplitude, Engine, RunOptions, SimulationMetadata, SimulationOutputs, SimulationResult,
 };
-pub use transpile::{Connectivity, Layout, TranspileOptions, TranspileResult};
+pub use transpile::{Connectivity, Layout, Router, TranspileOptions, TranspileResult};

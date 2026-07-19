@@ -245,6 +245,17 @@ println!("initial layout = {:?}, swaps = {}",
     t.initial_layout.unwrap(), t.swap_count.unwrap());
 ```
 
+The **router** — how SWAPs are inserted once routing is unavoidable — can also
+be chosen. `Router::Sabre` looks ahead over upcoming gates and usually inserts
+fewer SWAPs than the default per-gate greedy router.
+
+```rust
+use casq_sdk::{Connectivity, Router, TranspileOptions};
+
+let opts = TranspileOptions::connectivity(Connectivity::Linear).with_router(Router::Sabre);
+let t = client.transpile_with(&c, opts).await?;
+```
+
 ## Async jobs
 
 `client.jobs()` submits simulations to the background job engine (optionally on a

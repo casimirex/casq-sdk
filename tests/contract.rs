@@ -129,6 +129,7 @@ fn sdk_request_fields_match_dto_schemas() {
                 "connectivity",
                 "coupling",
                 "layout",
+                "router",
             ],
         ),
         (
