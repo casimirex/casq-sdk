@@ -8,7 +8,7 @@ use crate::error::{Error, Result};
 use crate::jobs::Jobs;
 use crate::models::{AuthToken, CircuitList, CircuitRecord};
 use crate::simulation::{RunOptions, SimulationResult};
-use crate::transpile::TranspileResult;
+use crate::transpile::{TranspileOptions, TranspileResult};
 use reqwest::{Method, StatusCode};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -156,10 +156,24 @@ impl Client {
 
     /// Decompose a circuit into the native gate basis (`rz`, `ry`, `cx`).
     pub async fn transpile(&self, circuit: &Circuit) -> Result<TranspileResult> {
-        let body = serde_json::json!({
+        self.transpile_with(circuit, TranspileOptions::default())
+            .await
+    }
+
+    /// Decompose a circuit into the native gate basis and, when `options`
+    /// specifies a connectivity or coupling map, route it with SWAPs so every
+    /// two-qubit gate acts on coupled qubits. The result's `final_permutation`
+    /// reports the logical→physical layout after routing.
+    pub async fn transpile_with(
+        &self,
+        circuit: &Circuit,
+        options: TranspileOptions,
+    ) -> Result<TranspileResult> {
+        let mut body = serde_json::json!({
             "numQubits": circuit.num_qubits(),
             "operations": circuit.operations(),
         });
+        options.apply(&mut body);
         self.post("/transpile", &body).await
     }
 
