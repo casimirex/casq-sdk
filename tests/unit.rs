@@ -35,6 +35,21 @@ fn bell_circuit_serializes_to_api_operations() {
 }
 
 #[test]
+fn multi_controlled_gates_fold_controls_into_targets() {
+    let mut circuit = Circuit::new(4);
+    circuit.mcx(&[0, 1, 2], 3).mcz(&[0, 1], 2).ccz(0, 1, 2);
+
+    assert_eq!(
+        circuit.operations(),
+        &[
+            Operation::new("mcx", vec![0, 1, 2, 3]),
+            Operation::new("mcz", vec![0, 1, 2]),
+            Operation::new("ccz", vec![0, 1, 2]),
+        ]
+    );
+}
+
+#[test]
 fn rotation_gate_emits_params() {
     let mut circuit = Circuit::new(1);
     circuit.rx(0, std::f64::consts::FRAC_PI_2);

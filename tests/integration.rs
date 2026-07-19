@@ -500,3 +500,23 @@ async fn greedy_layout_cuts_swaps() {
     assert_eq!(greedy.swap_count, Some(0));
     assert!(greedy.initial_layout.is_some(), "greedy reports its layout");
 }
+
+#[tokio::test]
+async fn multi_controlled_x_runs() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    // 3-control X: flip q3 iff q0,q1,q2 all set. Prepare the controls, then mcx.
+    let mut circuit = Circuit::new(4);
+    circuit.x(0).x(1).x(2).mcx(&[0, 1, 2], 3);
+
+    let result = client
+        .run(&circuit, RunOptions::new().shots(256))
+        .await
+        .expect("mcx run");
+    // Deterministic: all four qubits end set.
+    let counts = result.counts();
+    assert_eq!(counts.keys().collect::<Vec<_>>(), vec!["1111"]);
+}

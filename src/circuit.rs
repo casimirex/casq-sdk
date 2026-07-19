@@ -202,6 +202,30 @@ impl Circuit {
         self.add("cswap", vec![control, target1, target2])
     }
 
+    // --- Multi-controlled gates ---
+    // Controls are folded into the target list ([...controls, target]), matching
+    // the API's convention for ccx/cswap.
+
+    /// Multi-controlled X (generalized CNOT/Toffoli): flip `target` when every
+    /// qubit in `controls` is set.
+    pub fn mcx(&mut self, controls: &[usize], target: usize) -> &mut Self {
+        let mut targets = controls.to_vec();
+        targets.push(target);
+        self.add("mcx", targets)
+    }
+
+    /// Multi-controlled Z: phase-flip `|1…1⟩` over `controls` + `target`.
+    pub fn mcz(&mut self, controls: &[usize], target: usize) -> &mut Self {
+        let mut targets = controls.to_vec();
+        targets.push(target);
+        self.add("mcz", targets)
+    }
+
+    /// Doubly-controlled Z (a 2-control [`Circuit::mcz`]).
+    pub fn ccz(&mut self, control1: usize, control2: usize, target: usize) -> &mut Self {
+        self.add("ccz", vec![control1, control2, target])
+    }
+
     // --- Non-unitary / structural ---
 
     /// Measure a single qubit.
