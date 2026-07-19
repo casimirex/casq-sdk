@@ -467,3 +467,36 @@ async fn transpile_routes_onto_linear_connectivity() {
         }
     }
 }
+
+#[tokio::test]
+async fn greedy_layout_cuts_swaps() {
+    use casq_sdk::{Connectivity, Layout, TranspileOptions};
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    // cx(0,2) on a line: the identity layout needs a SWAP; a greedy layout can
+    // seat the interacting qubits adjacent and avoid it entirely.
+    let mut circuit = Circuit::new(3);
+    circuit.h(0).cx(0, 2);
+
+    let trivial = client
+        .transpile_with(
+            &circuit,
+            TranspileOptions::connectivity(Connectivity::Linear).with_layout(Layout::Trivial),
+        )
+        .await
+        .expect("trivial");
+    let greedy = client
+        .transpile_with(
+            &circuit,
+            TranspileOptions::connectivity(Connectivity::Linear).with_layout(Layout::Greedy),
+        )
+        .await
+        .expect("greedy");
+
+    assert_eq!(trivial.swap_count, Some(1));
+    assert_eq!(greedy.swap_count, Some(0));
+    assert!(greedy.initial_layout.is_some(), "greedy reports its layout");
+}
