@@ -1695,7 +1695,7 @@
             "bearer": []
           }
         ],
-        "summary": "Decompose a circuit into the native gate basis.",
+        "summary": "Decompose a circuit into the native gate basis, optionally routing it.",
         "tags": [
           "Transpiler"
         ]
@@ -2032,6 +2032,21 @@
             "type": "array",
             "items": {
               "type": "object"
+            }
+          },
+          "connectivity": {
+            "type": "string",
+            "description": "Route the circuit onto this qubit connectivity, inserting SWAPs so every\ntwo-qubit gate acts on coupled qubits. Omit (or 'all-to-all') to skip\nrouting.",
+            "enum": [
+              "all-to-all",
+              "linear"
+            ]
+          },
+          "coupling": {
+            "description": "An explicit coupling map (`[[a, b], ...]` undirected edges), taking\nprecedence over `connectivity` for non-linear topologies.",
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           }
         },

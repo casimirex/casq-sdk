@@ -309,4 +309,22 @@ fn transpile_result_parses_and_builds_a_circuit() {
     let circuit = r.to_circuit(2);
     assert_eq!(circuit.num_qubits(), 2);
     assert_eq!(circuit.operations().len(), 3);
+
+    // A plain (unrouted) result has no routing fields.
+    assert!(r.final_permutation.is_none());
+    assert!(r.swap_count.is_none());
+}
+
+#[test]
+fn routed_transpile_result_parses_permutation_and_swaps() {
+    let raw = r#"{
+        "operations":[{"gate":"cx","targets":[0,1]}],
+        "basis":["id","rz","ry","cx"],
+        "originalGateCount":1,"transpiledGateCount":4,
+        "fullyNative":true,"unsupported":[],
+        "finalPermutation":[0,2,1],"swapCount":1
+    }"#;
+    let r: TranspileResult = serde_json::from_str(raw).unwrap();
+    assert_eq!(r.final_permutation.as_deref(), Some([0, 2, 1].as_slice()));
+    assert_eq!(r.swap_count, Some(1));
 }

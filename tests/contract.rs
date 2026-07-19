@@ -121,7 +121,10 @@ fn sdk_request_fields_match_dto_schemas() {
             "RunOnBackendDto",
             &["numQubits", "operations", "shots", "seed", "noise"],
         ),
-        ("TranspileDto", &["numQubits", "operations"]),
+        (
+            "TranspileDto",
+            &["numQubits", "operations", "connectivity", "coupling"],
+        ),
         (
             "SubmitSimulationJobDto",
             &[

@@ -429,3 +429,41 @@ async fn transpile_decomposes_to_native_basis() {
         assert!(state == "00" || state == "11", "unexpected state {state}");
     }
 }
+
+#[tokio::test]
+async fn transpile_routes_onto_linear_connectivity() {
+    use casq_sdk::{Connectivity, TranspileOptions};
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    // cx(0,2) can't run on a line 0—1—2; routing must insert a SWAP.
+    let mut circuit = Circuit::new(3);
+    circuit.h(0).cx(0, 2);
+
+    let result = client
+        .transpile_with(
+            &circuit,
+            TranspileOptions::connectivity(Connectivity::Linear),
+        )
+        .await
+        .expect("transpile+route");
+
+    let swaps = result.swap_count.expect("routed result reports swapCount");
+    assert!(swaps >= 1, "expected a SWAP for a non-adjacent CX");
+    let perm = result
+        .final_permutation
+        .as_ref()
+        .expect("routed result reports finalPermutation");
+    assert_eq!(perm.len(), 3);
+
+    // Every two-qubit gate now acts on adjacent physical qubits, all native.
+    for op in &result.operations {
+        assert!(result.basis.contains(&op.gate), "non-native {}", op.gate);
+        if op.targets.len() == 2 {
+            let d = op.targets[0].abs_diff(op.targets[1]);
+            assert_eq!(d, 1, "two-qubit gate on non-adjacent {:?}", op.targets);
+        }
+    }
+}

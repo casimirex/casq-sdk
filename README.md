@@ -204,6 +204,31 @@ let native = t.to_circuit(2);
 let result = client.run(&native, RunOptions::new().shots(1000)).await?;
 ```
 
+### Routing onto hardware connectivity
+
+Real devices only run a two-qubit gate between *coupled* qubits.
+`transpile_with` routes a circuit onto a connectivity, inserting SWAPs so every
+two-qubit gate acts on adjacent qubits. The result reports `swap_count` and a
+`final_permutation` — the logical→physical layout after routing (read logical
+qubit `l` from physical `final_permutation[l]`).
+
+```rust
+use casq_sdk::{Connectivity, TranspileOptions};
+
+let mut c = Circuit::new(3);
+c.h(0).cx(0, 2);   // 0 and 2 aren't adjacent on a line
+
+let t = client
+    .transpile_with(&c, TranspileOptions::connectivity(Connectivity::Linear))
+    .await?;
+println!("inserted {} SWAP(s); layout = {:?}",
+    t.swap_count.unwrap(), t.final_permutation.unwrap());
+
+// Or route onto an explicit (non-linear) coupling map:
+let star = TranspileOptions::coupling(vec![[0, 1], [0, 2], [0, 3]]);
+let t = client.transpile_with(&c, star).await?;
+```
+
 ## Async jobs
 
 `client.jobs()` submits simulations to the background job engine (optionally on a
