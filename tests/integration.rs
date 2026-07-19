@@ -520,3 +520,35 @@ async fn multi_controlled_x_runs() {
     let counts = result.counts();
     assert_eq!(counts.keys().collect::<Vec<_>>(), vec!["1111"]);
 }
+
+#[tokio::test]
+async fn sabre_router_inserts_no_more_swaps_than_greedy() {
+    use casq_sdk::{Connectivity, Router, TranspileOptions};
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    // [cx(0,2), cx(0,1)] on a line: greedy needs 2 SWAPs, SABRE's lookahead 1.
+    let mut circuit = Circuit::new(3);
+    circuit.h(0).cx(0, 2).cx(0, 1);
+
+    let greedy = client
+        .transpile_with(
+            &circuit,
+            TranspileOptions::connectivity(Connectivity::Linear).with_router(Router::Greedy),
+        )
+        .await
+        .expect("greedy");
+    let sabre = client
+        .transpile_with(
+            &circuit,
+            TranspileOptions::connectivity(Connectivity::Linear).with_router(Router::Sabre),
+        )
+        .await
+        .expect("sabre");
+
+    let (g, s) = (greedy.swap_count.unwrap(), sabre.swap_count.unwrap());
+    assert!(s <= g, "SABRE ({s}) should not exceed greedy ({g})");
+    assert_eq!((g, s), (2, 1));
+}

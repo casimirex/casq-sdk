@@ -47,6 +47,25 @@ impl Layout {
     }
 }
 
+/// SWAP-insertion strategy used during routing.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum Router {
+    /// Per-gate greedy: walk one operand along a shortest path.
+    #[default]
+    Greedy,
+    /// SABRE-style lookahead over a front layer + window (usually fewer SWAPs).
+    Sabre,
+}
+
+impl Router {
+    fn as_str(self) -> &'static str {
+        match self {
+            Router::Greedy => "greedy",
+            Router::Sabre => "sabre",
+        }
+    }
+}
+
 /// Options controlling transpilation. `Default` decomposes without routing.
 #[derive(Clone, Debug, Default)]
 pub struct TranspileOptions {
@@ -58,6 +77,8 @@ pub struct TranspileOptions {
     pub coupling: Option<Vec<[usize; 2]>>,
     /// Initial-placement strategy when routing (default [`Layout::Trivial`]).
     pub layout: Option<Layout>,
+    /// SWAP-insertion strategy when routing (default [`Router::Greedy`]).
+    pub router: Option<Router>,
 }
 
 impl TranspileOptions {
@@ -65,23 +86,27 @@ impl TranspileOptions {
     pub fn connectivity(connectivity: Connectivity) -> Self {
         Self {
             connectivity: Some(connectivity),
-            coupling: None,
-            layout: None,
+            ..Self::default()
         }
     }
 
     /// Route onto an explicit coupling map.
     pub fn coupling(edges: impl Into<Vec<[usize; 2]>>) -> Self {
         Self {
-            connectivity: None,
             coupling: Some(edges.into()),
-            layout: None,
+            ..Self::default()
         }
     }
 
     /// Set the initial-placement strategy (chainable).
     pub fn with_layout(mut self, layout: Layout) -> Self {
         self.layout = Some(layout);
+        self
+    }
+
+    /// Set the SWAP-insertion strategy (chainable).
+    pub fn with_router(mut self, router: Router) -> Self {
+        self.router = Some(router);
         self
     }
 
@@ -95,6 +120,9 @@ impl TranspileOptions {
         }
         if let Some(layout) = self.layout {
             body["layout"] = serde_json::json!(layout.as_str());
+        }
+        if let Some(router) = self.router {
+            body["router"] = serde_json::json!(router.as_str());
         }
     }
 }
@@ -158,13 +186,15 @@ mod tests {
         TranspileOptions::coupling(vec![[0, 1], [0, 2]]).apply(&mut body);
         assert_eq!(body["coupling"], serde_json::json!([[0, 1], [0, 2]]));
 
-        // A layout strategy serializes alongside the connectivity.
+        // Layout and router strategies serialize alongside the connectivity.
         let mut body = serde_json::json!({ "numQubits": 3 });
         TranspileOptions::connectivity(Connectivity::Linear)
             .with_layout(Layout::Greedy)
+            .with_router(Router::Sabre)
             .apply(&mut body);
         assert_eq!(body["connectivity"], "linear");
         assert_eq!(body["layout"], "greedy");
+        assert_eq!(body["router"], "sabre");
 
         // Default routes nothing.
         let mut body = serde_json::json!({ "numQubits": 2 });
@@ -172,5 +202,6 @@ mod tests {
         assert!(body.get("connectivity").is_none());
         assert!(body.get("coupling").is_none());
         assert!(body.get("layout").is_none());
+        assert!(body.get("router").is_none());
     }
 }

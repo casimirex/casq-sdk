@@ -615,6 +615,33 @@
         "tags": [
           "Simulations"
         ]
+      },
+      "delete": {
+        "operationId": "SimulationController_deleteSimulation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a simulation run from history.",
+        "tags": [
+          "Simulations"
+        ]
       }
     },
     "/api/v1/simulations/{id}/results": {
@@ -1700,6 +1727,36 @@
           "Transpiler"
         ]
       }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Liveness: the process is running.",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/ready": {
+      "get": {
+        "operationId": "HealthController_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Readiness: dependencies are reachable (503 otherwise).",
+        "tags": [
+          "Health"
+        ]
+      }
     }
   },
   "info": {
@@ -2055,6 +2112,14 @@
             "enum": [
               "trivial",
               "greedy"
+            ]
+          },
+          "router": {
+            "type": "string",
+            "description": "SWAP-insertion strategy when routing. `'sabre'` uses a lookahead heuristic\nthat usually inserts fewer SWAPs; `'greedy'` (default) walks one operand of\neach gate along a shortest path.",
+            "enum": [
+              "greedy",
+              "sabre"
             ]
           }
         },
