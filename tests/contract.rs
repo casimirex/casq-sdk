@@ -123,7 +123,13 @@ fn sdk_request_fields_match_dto_schemas() {
         ),
         (
             "TranspileDto",
-            &["numQubits", "operations", "connectivity", "coupling"],
+            &[
+                "numQubits",
+                "operations",
+                "connectivity",
+                "coupling",
+                "layout",
+            ],
         ),
         (
             "SubmitSimulationJobDto",

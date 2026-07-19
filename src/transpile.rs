@@ -28,6 +28,25 @@ impl Connectivity {
     }
 }
 
+/// Initial-placement strategy used before routing.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum Layout {
+    /// Start from the identity placement (logical `i` on physical `i`).
+    #[default]
+    Trivial,
+    /// Seat interacting qubits near each other to cut SWAPs (greedy heuristic).
+    Greedy,
+}
+
+impl Layout {
+    fn as_str(self) -> &'static str {
+        match self {
+            Layout::Trivial => "trivial",
+            Layout::Greedy => "greedy",
+        }
+    }
+}
+
 /// Options controlling transpilation. `Default` decomposes without routing.
 #[derive(Clone, Debug, Default)]
 pub struct TranspileOptions {
@@ -37,6 +56,8 @@ pub struct TranspileOptions {
     /// An explicit coupling map (`[[a, b], ...]` undirected edges) for
     /// non-linear topologies. Takes precedence over `connectivity`.
     pub coupling: Option<Vec<[usize; 2]>>,
+    /// Initial-placement strategy when routing (default [`Layout::Trivial`]).
+    pub layout: Option<Layout>,
 }
 
 impl TranspileOptions {
@@ -45,6 +66,7 @@ impl TranspileOptions {
         Self {
             connectivity: Some(connectivity),
             coupling: None,
+            layout: None,
         }
     }
 
@@ -53,7 +75,14 @@ impl TranspileOptions {
         Self {
             connectivity: None,
             coupling: Some(edges.into()),
+            layout: None,
         }
+    }
+
+    /// Set the initial-placement strategy (chainable).
+    pub fn with_layout(mut self, layout: Layout) -> Self {
+        self.layout = Some(layout);
+        self
     }
 
     /// Serialize into the request-body fields the API expects.
@@ -63,6 +92,9 @@ impl TranspileOptions {
         }
         if let Some(edges) = &self.coupling {
             body["coupling"] = serde_json::json!(edges);
+        }
+        if let Some(layout) = self.layout {
+            body["layout"] = serde_json::json!(layout.as_str());
         }
     }
 }
@@ -91,6 +123,11 @@ pub struct TranspileResult {
     /// `final_permutation[l]`.
     #[serde(rename = "finalPermutation")]
     pub final_permutation: Option<Vec<usize>>,
+    /// The chosen initial placement: `initial_layout[logical] = physical` qubit
+    /// it started on. Prepare an input for logical qubit `l` on physical
+    /// `initial_layout[l]`.
+    #[serde(rename = "initialLayout")]
+    pub initial_layout: Option<Vec<usize>>,
     /// Number of SWAPs inserted by routing (each expands to `3×cx`).
     #[serde(rename = "swapCount")]
     pub swap_count: Option<usize>,
@@ -121,10 +158,19 @@ mod tests {
         TranspileOptions::coupling(vec![[0, 1], [0, 2]]).apply(&mut body);
         assert_eq!(body["coupling"], serde_json::json!([[0, 1], [0, 2]]));
 
+        // A layout strategy serializes alongside the connectivity.
+        let mut body = serde_json::json!({ "numQubits": 3 });
+        TranspileOptions::connectivity(Connectivity::Linear)
+            .with_layout(Layout::Greedy)
+            .apply(&mut body);
+        assert_eq!(body["connectivity"], "linear");
+        assert_eq!(body["layout"], "greedy");
+
         // Default routes nothing.
         let mut body = serde_json::json!({ "numQubits": 2 });
         TranspileOptions::default().apply(&mut body);
         assert!(body.get("connectivity").is_none());
         assert!(body.get("coupling").is_none());
+        assert!(body.get("layout").is_none());
     }
 }

@@ -2048,6 +2048,14 @@
             "items": {
               "type": "string"
             }
+          },
+          "layout": {
+            "type": "string",
+            "description": "Initial-placement strategy when routing. `'greedy'` seats interacting\nqubits near each other to cut SWAPs; `'trivial'` (default) starts from the\nidentity placement.",
+            "enum": [
+              "trivial",
+              "greedy"
+            ]
           }
         },
         "required": [

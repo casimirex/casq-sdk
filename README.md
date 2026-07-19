@@ -229,6 +229,22 @@ let star = TranspileOptions::coupling(vec![[0, 1], [0, 2], [0, 3]]);
 let t = client.transpile_with(&c, star).await?;
 ```
 
+A **smarter initial layout** can cut the SWAP count: instead of starting from
+the identity placement, `Layout::Greedy` seats interacting qubits near each
+other. The result reports the chosen `initial_layout` (where each logical qubit
+starts) alongside `final_permutation` and `swap_count`.
+
+```rust
+use casq_sdk::{Connectivity, Layout, TranspileOptions};
+
+let opts = TranspileOptions::connectivity(Connectivity::Linear).with_layout(Layout::Greedy);
+let t = client.transpile_with(&c, opts).await?;
+// For cx(0,2) on a line this drops from 1 SWAP to 0: the two interacting
+// qubits are placed on adjacent wires from the start.
+println!("initial layout = {:?}, swaps = {}",
+    t.initial_layout.unwrap(), t.swap_count.unwrap());
+```
+
 ## Async jobs
 
 `client.jobs()` submits simulations to the background job engine (optionally on a
