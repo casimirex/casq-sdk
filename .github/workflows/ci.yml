@@ -38,3 +38,36 @@ jobs:
       # Network-gated integration tests are skipped when CASQ_BASE_URL is unset.
       - name: Test
         run: cargo test
+
+  # The contract test above only checks the SDK against the *vendored* spec, which
+  # can go stale. This job diffs that vendored copy against casimirQ's canonical
+  # openapi.json, so a DTO change upstream fails the SDK's CI until the copy is
+  # refreshed. Requires a repo secret `CASIMIRQ_TOKEN` with read access to the
+  # private casimirex/casimirQ repo (a fine-grained PAT or App token).
+  openapi-sync:
+    name: OpenAPI contract in sync with casimirQ
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require CASIMIRQ_TOKEN secret
+        env:
+          TOKEN: ${{ secrets.CASIMIRQ_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Set a repo secret CASIMIRQ_TOKEN (read access to casimirex/casimirQ) to enforce the cross-repo contract."
+            exit 1
+          fi
+
+      - name: Check out casimirQ's canonical spec
+        uses: actions/checkout@v4
+        with:
+          repository: casimirex/casimirQ
+          ref: master
+          token: ${{ secrets.CASIMIRQ_TOKEN }}
+          path: casimirQ
+          sparse-checkout: openapi.json
+          sparse-checkout-cone-mode: false
+
+      - name: Vendored spec matches casimirQ
+        run: scripts/check-openapi-sync.sh casimirQ/openapi.json
