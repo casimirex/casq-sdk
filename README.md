@@ -335,6 +335,14 @@ after an API change:
 scripts/refresh-openapi.sh ../casimirQ/openapi.json
 ```
 
+The contract test only checks the SDK against that *vendored* copy, which can go
+stale. CI's **`openapi-sync`** job closes that gap: it checks out casimirQ's
+canonical `openapi.json` and diffs it against `tests/openapi.json`
+(`scripts/check-openapi-sync.sh`), failing when an upstream DTO change hasn't
+been vendored here. It reads the private platform repo through a repo secret —
+add **`CASIMIRQ_TOKEN`** (a fine-grained PAT or App token with read access to
+`casimirex/casimirQ`) under *Settings → Secrets and variables → Actions*.
+
 ## Related
 
 - [casimirQ](../casimirQ) — the quantum simulation platform this client targets.
