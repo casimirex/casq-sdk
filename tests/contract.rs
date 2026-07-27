@@ -36,6 +36,14 @@ const ENDPOINTS: &[(&str, &str)] = &[
     ("post", "/api/v1/algorithms/teleport"),
     ("post", "/api/v1/algorithms/vqe"),
     ("post", "/api/v1/algorithms/qaoa"),
+    ("post", "/api/v1/algorithms/deutsch-jozsa"),
+    ("post", "/api/v1/algorithms/bernstein-vazirani"),
+    ("post", "/api/v1/algorithms/simon"),
+    ("post", "/api/v1/algorithms/phase-estimation"),
+    ("post", "/api/v1/algorithms/amplitude-amplification"),
+    ("post", "/api/v1/algorithms/quantum-walk"),
+    ("post", "/api/v1/algorithms/hamiltonian-simulation"),
+    ("post", "/api/v1/algorithms/hhl"),
     ("get", "/api/v1/algorithms/vqe/examples"),
     ("get", "/api/v1/algorithms/qaoa/examples"),
     // advanced (advanced.rs)
@@ -106,6 +114,20 @@ fn sdk_request_fields_match_dto_schemas() {
         ("TeleportDto", &["alpha", "beta"]),
         ("VQEDto", &["n", "hamiltonian", "maxIterations"]),
         ("QAOADto", &["n", "edges", "p"]),
+        ("DeutschJozsaDto", &["n", "oracle", "value", "mask"]),
+        ("BernsteinVaziraniDto", &["n", "secret"]),
+        ("SimonDto", &["n", "secret"]),
+        ("PhaseEstimationDto", &["phi", "precision"]),
+        (
+            "AmplitudeAmplificationDto",
+            &["angles", "goodStates", "iterations"],
+        ),
+        ("QuantumWalkDto", &["n", "steps", "start", "symmetricCoin"]),
+        (
+            "HamiltonianSimulationDto",
+            &["n", "terms", "time", "steps", "order", "initialOnes"],
+        ),
+        ("HHLDto", &["b0", "b1"]),
         (
             "SimulateNoiseDto",
             &[

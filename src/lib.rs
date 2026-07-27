@@ -38,7 +38,9 @@
 //!
 //! - [`Client`] — authentication, circuit persistence, simulation, algorithms.
 //! - [`Circuit`] — local circuit construction with a Qiskit-style gate API.
-//! - [`algorithms`] — typed wrappers for QFT, Grover, Shor, VQE, QAOA, teleport.
+//! - [`algorithms`] — typed wrappers for QFT, Grover, Shor, VQE, QAOA, teleport,
+//!   Deutsch-Jozsa, Bernstein-Vazirani, Simon, phase estimation, amplitude
+//!   amplification, quantum walk, Hamiltonian simulation, and HHL.
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]

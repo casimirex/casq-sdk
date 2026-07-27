@@ -100,10 +100,18 @@ println!("ground-state energy ≈ {:.4}", vqe.optimal_energy);
 | `list()` | `Vec<AlgorithmInfo>` |
 | `qft(n)` | `QftResult` |
 | `grover(n, marked, iterations)` | `GroverResult` |
-| `shor(number)` | `ShorResult` |
+| `shor(number)` | `ShorResult` (genuine QPE order finding) |
 | `teleport(alpha, beta)` | `TeleportResult` |
 | `vqe(n, hamiltonian, max_iterations)` | `VqeResult` |
 | `qaoa(n, edges, p)` | `QaoaResult` |
+| `deutsch_jozsa(n, oracle, value, mask)` | `DeutschJozsaResult` |
+| `bernstein_vazirani(n, secret)` | `BernsteinVaziraniResult` |
+| `simon(n, secret)` | `SimonResult` |
+| `phase_estimation(phi, precision)` | `PhaseEstimationResult` |
+| `amplitude_amplification(angles, good_states, iterations)` | `AmplitudeAmplificationResult` |
+| `quantum_walk(n, steps, start, symmetric_coin)` | `QuantumWalkResult` |
+| `hamiltonian_simulation(n, terms, time, steps, order, initial_ones)` | `HamiltonianSimulationResult` |
+| `hhl(b0, b1)` | `HhlResult` |
 | `vqe_examples()` / `qaoa_examples()` | example inputs |
 
 ## Advanced features
