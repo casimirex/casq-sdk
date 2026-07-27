@@ -104,6 +104,124 @@ async fn shor_factors_fifteen() {
     let mut factors = result.factors.clone();
     factors.sort_unstable();
     assert_eq!(factors, vec![3, 5]);
+    // Genuine quantum order finding: the period is the multiplicative order.
+    assert_eq!(result.period, 4);
+    assert!(result.base.is_some());
+}
+
+#[tokio::test]
+async fn oracle_algorithms_recover_their_secrets() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+    let algos = client.algorithms();
+
+    let dj = algos
+        .deutsch_jozsa(3, "balanced", None, Some(5))
+        .await
+        .expect("deutsch-jozsa");
+    assert_eq!(dj.decision, "balanced");
+    assert!(dj.correct);
+
+    let bv = algos
+        .bernstein_vazirani(5, 21)
+        .await
+        .expect("bernstein-vazirani");
+    assert_eq!(bv.recovered, 21);
+    assert!(bv.correct);
+
+    let simon = algos.simon(3, 6).await.expect("simon");
+    assert_eq!(simon.recovered, 6);
+    assert!(simon.correct);
+}
+
+#[tokio::test]
+async fn phase_estimation_recovers_a_dyadic_phase() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let qpe = client
+        .algorithms()
+        .phase_estimation(0.375, 4)
+        .await
+        .expect("phase-estimation");
+    assert_eq!(qpe.measured_integer, 6);
+    assert!((qpe.estimated_phase - 0.375).abs() < 1e-9);
+}
+
+#[tokio::test]
+async fn amplitude_amplification_amplifies_a_good_state() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let aa = client
+        .algorithms()
+        .amplitude_amplification(&[std::f64::consts::FRAC_PI_2; 3], &[5], None)
+        .await
+        .expect("amplitude-amplification");
+    assert!(aa.final_probability > aa.initial_probability);
+    assert!(aa.final_probability > 0.9);
+}
+
+#[tokio::test]
+async fn quantum_walk_spreads_ballistically() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let walk = client
+        .algorithms()
+        .quantum_walk(5, 8, None, None)
+        .await
+        .expect("quantum-walk");
+    assert!(walk.std_dev > walk.classical_std_dev);
+    assert!(!walk.distribution.is_empty());
+}
+
+#[tokio::test]
+async fn hamiltonian_simulation_evolves_under_x() {
+    use casq_sdk::algorithms::PauliTerm;
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let t = 0.7_f64;
+    let terms = [PauliTerm {
+        coefficient: 1.0,
+        paulis: vec!["X".into()],
+        qubits: vec![0],
+    }];
+    let sim = client
+        .algorithms()
+        .hamiltonian_simulation(1, &terms, t, None, None, None)
+        .await
+        .expect("hamiltonian-simulation");
+    let p1 = sim
+        .probabilities
+        .iter()
+        .find(|p| p.state == 1)
+        .map(|p| p.probability)
+        .unwrap_or(0.0);
+    assert!((p1 - t.sin().powi(2)).abs() < 1e-6);
+}
+
+#[tokio::test]
+async fn hhl_solves_a_linear_system() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    let hhl = client.algorithms().hhl(1.0, 0.0).await.expect("hhl");
+    assert!(hhl.fidelity > 0.99);
+    assert_eq!(hhl.classical_solution.len(), 2);
 }
 
 #[tokio::test]
