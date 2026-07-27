@@ -241,6 +241,246 @@
         ]
       }
     },
+    "/api/v1/algorithms/deutsch-jozsa": {
+      "post": {
+        "operationId": "AlgorithmsController_executeDeutschJozsa",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeutschJozsaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Deutsch-Jozsa: decide whether an oracle is constant or balanced.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/bernstein-vazirani": {
+      "post": {
+        "operationId": "AlgorithmsController_executeBernsteinVazirani",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BernsteinVaziraniDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Bernstein-Vazirani: recover a hidden bit string in one query.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/simon": {
+      "post": {
+        "operationId": "AlgorithmsController_executeSimon",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Simon's algorithm: find the hidden period of a 2-to-1 function.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/phase-estimation": {
+      "post": {
+        "operationId": "AlgorithmsController_executePhaseEstimation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhaseEstimationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Quantum Phase Estimation: estimate a unitary's eigenphase.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/amplitude-amplification": {
+      "post": {
+        "operationId": "AlgorithmsController_executeAmplitudeAmplification",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AmplitudeAmplificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Quantum Amplitude Amplification.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/quantum-walk": {
+      "post": {
+        "operationId": "AlgorithmsController_executeQuantumWalk",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuantumWalkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute a discrete-time quantum walk on a cycle.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/hamiltonian-simulation": {
+      "post": {
+        "operationId": "AlgorithmsController_executeHamiltonianSimulation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HamiltonianSimulationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute Trotterized Hamiltonian simulation e^{-iHt}.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
+    "/api/v1/algorithms/hhl": {
+      "post": {
+        "operationId": "AlgorithmsController_executeHHL",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HHLDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Execute HHL: solve a Hermitian linear system A x = b.",
+        "tags": [
+          "Algorithms"
+        ]
+      }
+    },
     "/api/v1/algorithms/{name}/verify": {
       "get": {
         "operationId": "AlgorithmsController_verifyAlgorithm",
@@ -1930,6 +2170,226 @@
         },
         "required": [
           "N"
+        ]
+      },
+      "DeutschJozsaDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "oracle": {
+            "type": "string",
+            "description": "Which kind of oracle to interrogate.",
+            "enum": [
+              "constant",
+              "balanced"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "description": "For a constant oracle: the value f returns for every input (default 0).",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "mask": {
+            "type": "number",
+            "description": "For a balanced oracle: the parity mask defining f(x)=(mask·x) mod 2.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "n",
+          "oracle"
+        ]
+      },
+      "BernsteinVaziraniDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "secret": {
+            "type": "number",
+            "description": "The hidden bit string s, as an integer in [0, 2^n).",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "n",
+          "secret"
+        ]
+      },
+      "SimonDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "secret": {
+            "type": "number",
+            "description": "The hidden period s, as an integer in [0, 2^n).",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "n",
+          "secret"
+        ]
+      },
+      "PhaseEstimationDto": {
+        "type": "object",
+        "properties": {
+          "phi": {
+            "type": "number",
+            "description": "The true eigenphase φ ∈ [0, 1) of U = P(2πφ) to estimate.",
+            "minimum": 0
+          },
+          "precision": {
+            "type": "number",
+            "description": "Number of counting qubits (bits of precision).",
+            "minimum": 1,
+            "maximum": 15
+          }
+        },
+        "required": [
+          "phi",
+          "precision"
+        ]
+      },
+      "AmplitudeAmplificationDto": {
+        "type": "object",
+        "properties": {
+          "angles": {
+            "description": "Per-qubit RY angles defining the state preparation A. Length = qubit count.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "goodStates": {
+            "description": "Basis states (integers) considered \"good\" and to be amplified.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "iterations": {
+            "type": "number",
+            "description": "Optional override for the number of Q iterations (default: optimal).",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "angles",
+          "goodStates"
+        ]
+      },
+      "QuantumWalkDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "description": "Number of position qubits (cycle length N = 2^n).",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "steps": {
+            "type": "number",
+            "description": "Number of walk steps.",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "start": {
+            "type": "number",
+            "description": "Starting node (default: cycle midpoint 2^{n-1}).",
+            "minimum": 0
+          },
+          "symmetricCoin": {
+            "type": "boolean",
+            "description": "Prepare the coin in (|0⟩+i|1⟩)/√2 for a symmetric distribution (default true)."
+          }
+        },
+        "required": [
+          "n",
+          "steps"
+        ]
+      },
+      "HamiltonianSimulationDto": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "terms": {
+            "description": "The Hamiltonian as a sum of weighted Pauli strings.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "time": {
+            "type": "number",
+            "description": "Total evolution time t."
+          },
+          "steps": {
+            "type": "number",
+            "description": "Number of Trotter steps r (default 1).",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "order": {
+            "type": "number",
+            "description": "Trotter order: 1 = Lie-Trotter, 2 = symmetric Suzuki (default 1).",
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "initialOnes": {
+            "description": "Qubits to flip to |1⟩ before evolving (default: |0…0⟩).",
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "required": [
+          "n",
+          "terms",
+          "time"
+        ]
+      },
+      "HHLDto": {
+        "type": "object",
+        "properties": {
+          "b0": {
+            "type": "number",
+            "description": "Amplitude of |0⟩ in the right-hand side b (need not be normalised)."
+          },
+          "b1": {
+            "type": "number",
+            "description": "Amplitude of |1⟩ in the right-hand side b (need not be normalised)."
+          }
+        },
+        "required": [
+          "b0",
+          "b1"
         ]
       },
       "SimulateNoiseDto": {
