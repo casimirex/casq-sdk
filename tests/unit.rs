@@ -344,3 +344,17 @@ fn routed_transpile_result_parses_permutation_and_swaps() {
     assert_eq!(r.initial_layout.as_deref(), Some([0, 1, 2].as_slice()));
     assert_eq!(r.swap_count, Some(1));
 }
+
+#[test]
+fn controlled_rotation_emits_control_target_and_param() {
+    let mut circuit = Circuit::new(2);
+    circuit.crz(0, 1, std::f64::consts::FRAC_PI_2);
+
+    let json = serde_json::to_value(&circuit).unwrap();
+    assert_eq!(json["operations"][0]["gate"], "crz");
+    assert_eq!(json["operations"][0]["targets"], serde_json::json!([0, 1]));
+    assert_eq!(
+        json["operations"][0]["params"][0].as_f64().unwrap(),
+        std::f64::consts::FRAC_PI_2
+    );
+}

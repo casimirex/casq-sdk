@@ -670,3 +670,22 @@ async fn sabre_router_inserts_no_more_swaps_than_greedy() {
     assert!(s <= g, "SABRE ({s}) should not exceed greedy ({g})");
     assert_eq!((g, s), (2, 1));
 }
+
+#[tokio::test]
+async fn controlled_rotation_runs() {
+    let Some(cfg) = config() else {
+        return;
+    };
+    let client = authed_client(&cfg).await;
+
+    // Controlled-Ry(pi): with the control set, Ry(pi) maps |0> -> |1>, so |10> -> |11>.
+    let mut circuit = Circuit::new(2);
+    circuit.x(0).cry(0, 1, std::f64::consts::PI);
+
+    let result = client
+        .run(&circuit, RunOptions::new().shots(256))
+        .await
+        .expect("cry run");
+    let counts = result.counts();
+    assert_eq!(counts.keys().collect::<Vec<_>>(), vec!["11"]);
+}
