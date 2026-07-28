@@ -58,7 +58,8 @@ c.h(0)
 ```
 
 Available gates: `h x y z s sdg t tdg`, `rx ry rz p`, `cx`/`cnot cy cz ch swap cp`,
-`ccx`/`toffoli cswap`, multi-controlled `mcx mcz ccz`, `measure`/`measure_all`.
+controlled rotations `crx cry crz`, `ccx`/`toffoli cswap`, multi-controlled
+`mcx mcz ccz`, `measure`/`measure_all`.
 Use `Circuit::push(Operation)` for anything else.
 
 ## Persisting circuits

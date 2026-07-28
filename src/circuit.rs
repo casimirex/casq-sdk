@@ -187,6 +187,21 @@ impl Circuit {
         self.add_p("cp", vec![control, target], vec![lambda])
     }
 
+    /// Controlled X-rotation: `Rx(theta)` on `target` when `control` is set.
+    pub fn crx(&mut self, control: usize, target: usize, theta: f64) -> &mut Self {
+        self.add_p("crx", vec![control, target], vec![theta])
+    }
+
+    /// Controlled Y-rotation: `Ry(theta)` on `target` when `control` is set.
+    pub fn cry(&mut self, control: usize, target: usize, theta: f64) -> &mut Self {
+        self.add_p("cry", vec![control, target], vec![theta])
+    }
+
+    /// Controlled Z-rotation: `Rz(theta)` on `target` when `control` is set.
+    pub fn crz(&mut self, control: usize, target: usize, theta: f64) -> &mut Self {
+        self.add_p("crz", vec![control, target], vec![theta])
+    }
+
     // --- Three-qubit gates ---
 
     /// Toffoli (CCX): X on `target` when both controls are set.
